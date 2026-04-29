@@ -5,9 +5,12 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 import {
   ConflictException,
   InternalServerErrorException,
+  UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 
 @Injectable()
@@ -21,7 +24,25 @@ export class UsersService {
   async register(dto: RegisterDto) {
     const { email, password, firstname, lastname } = dto;
 
-    const existingUser = await this.usersRepository.findOne({ 
+    if (!firstname) {
+      throw new BadRequestException('Firstname is required');
+    }
+
+    if (!lastname) {
+      throw new BadRequestException('Lastname is required');
+    }
+
+    if (!email || !email.includes('@')) {
+      throw new BadRequestException('Invalid email format');
+    }
+
+    if (!password || password.length < 6) {
+      throw new BadRequestException(
+        'Password must contain at least 6 characters',
+      );
+    }
+
+    const existingUser = await this.usersRepository.findOne({
       where: { email },
     });
     if (existingUser) {
@@ -48,5 +69,26 @@ export class UsersService {
     } catch {
       throw new InternalServerErrorException('Failed to create user');
     }
+  }
+
+  async login(dto: LoginDto) {
+    const { email, password } = dto;
+
+    const user = await this.usersRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new UnauthorizedException('User with this email not found');
+    }
+
+    const isPasswordMatching = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatching) {
+      throw new UnauthorizedException('Incorrect password');
+    }
+
+    const payload = { sub: user.id, email: user.email };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

@@ -10,6 +10,9 @@ export class RegisterDto {
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Password must contain at least 6 characters',
+    minLength: 6,
+  })
   password: string;
 }
