@@ -91,4 +91,8 @@ export class UsersService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async findOne(id: number): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { id } });
+  }
 }
