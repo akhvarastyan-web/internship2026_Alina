@@ -7,7 +7,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Internship Project API')
-    .setDescription('Документація для мого монорепозиторію')
+    .setDescription('Documentation for my monorepository')
     .setVersion('1.0')
     .addTag('api')
     .build();
