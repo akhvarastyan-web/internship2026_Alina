@@ -10,6 +10,7 @@ async function bootstrap() {
     .setDescription('Documentation for my monorepository')
     .setVersion('1.0')
     .addTag('api')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
