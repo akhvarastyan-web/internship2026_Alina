@@ -1,10 +1,11 @@
-import { UsersService } from './users.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { User } from './user.entity';
+import { UsersService } from '../users/users.service';
+import { RegisterDto } from '../users/dto/register.dto';
+import { LoginDto } from '../users/dto/login.dto';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { JwtAuthGuard } from './jwt/jwt-auth.guard';
+import { User } from '../users/user.entity';
 import { Request as ExpressRequest } from 'express';
+import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
   Controller,
@@ -21,15 +22,18 @@ interface RequestWithUser extends ExpressRequest {
 }
 
 @Controller('auth')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
-    return this.usersService.register(registerDto);
+    return this.authService.register(registerDto);
   }
 
   @ApiOperation({ summary: 'Login user and return JWT token' })
@@ -37,7 +41,7 @@ export class UsersController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @Post('login')
   login(@Body() loginDto: LoginDto) {
-    return this.usersService.login(loginDto);
+    return this.authService.login(loginDto);
   }
 
   @ApiBearerAuth()
