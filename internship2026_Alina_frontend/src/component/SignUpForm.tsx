@@ -46,13 +46,7 @@ export const SignUpForm = () => {
         body: JSON.stringify(values),
       });
 
-      console.log('STATUS', response.status);
-
-
-
       const data = await response.json();
-
-      console.log('DATA', data);
 
 
       if (!response.ok) {
@@ -121,7 +115,7 @@ export const SignUpForm = () => {
             placeholder="Enter your first name"
             value={values.firstname}
             onChange={onInputChange}
-            error={error.firstName}
+            error={error.firstname}
           />
           <InputField
             id="lastname"
@@ -129,7 +123,7 @@ export const SignUpForm = () => {
             placeholder="Enter your last name"
             value={values.lastname}
             onChange={onInputChange}
-            error={error.lastName}
+            error={error.lastname}
           />
           <InputField
             id="email"

@@ -8,12 +8,12 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 export function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};
 
-  if (!nameRegex.test(values.firstName)) {
-    errors.firstName = 'First name must be 2–50 characters and contain no numbers.';
+  if (!nameRegex.test(values.firstname)) {
+    errors.firstname = 'First name must be 2–50 characters and contain no numbers.';
   }
 
-  if (!nameRegex.test(values.lastName)) {
-    errors.lastName = 'Last name must be 2–50 characters and contain no numbers.';
+  if (!nameRegex.test(values.lastname)) {
+    errors.lastname = 'Last name must be 2–50 characters and contain no numbers.';
   }
 
   if (!emailRegex.test(values.email)) {

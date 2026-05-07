@@ -1,20 +1,13 @@
 import { Loader2 } from 'lucide-react';
+import { ButtonProps } from '../../type/ButtonProps';
 
-interface ButtonProps {
-  text: string;
-  isLoading?: boolean;
-  disabled?: boolean;
-  type?: 'submit' | 'button' | 'reset';
-  className?: string;
-}
 
 export const Button = ({
   text,
   isLoading = false,
   disabled = false,
-  type = 'submit'
+  type = 'submit',
 }: ButtonProps) => {
-
   const isButtonDisabled = disabled || isLoading;
 
   return (

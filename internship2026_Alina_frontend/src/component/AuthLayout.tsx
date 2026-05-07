@@ -1,32 +1,40 @@
-import { Outlet } from 'react-router-dom';
+
 import { FormFooter } from '../component/Footer';
+import { useLocation, Outlet } from 'react-router-dom';
 
 
 export const AuthLayout = () => {
+  const location = useLocation();
+
+  const isSpecialForm = location.pathname.includes('signup');
+
   return (
     <main className="
-      min-h-screen bg-main
+      min-h-screen bg-bg-main
       flex
       lg:flex-row
       lg:w-full
       lg:overflow-hidden
       "
     >
-      <div className="
+      <div className={`
 
           w-full
-          justify-center
-          px-[clamp(12px,calc(100vw*(16/375)),24px)]
-          pt-[clamp(64px,calc(100vw*(79/375)),96px)]
           flex flex-col
 
+          items-center
+          px-[clamp(12px,calc(100vw*(16/375)),24px)]
+          pt-[clamp(64px,calc(100vw*(79/375)),96px)]
+
+
           lg:max-w-none
-          lg:justify-center
+          lg:flex-row
+          ${isSpecialForm ? 'lg:py-[clamp(48px,calc(100vw*(60/1440)),80px)]' : 'lg:py-0'}
           lg:justify-start
           lg:px-0
-          lg:pt-[clamp(48px,calc(100vw*(60/1440)),80px)]
+          ${isSpecialForm ? 'lg:pt-[clamp(48px,calc(100vw*(60/1440)),80px)]' : 'lg:pt-0'}
           lg:pl-[clamp(80px,calc(100vw*(100/1440)),150px)]
-        "
+        `}
       >
         <Outlet />
         <FormFooter />
@@ -38,7 +46,7 @@ export const AuthLayout = () => {
             relative
             lg:block
             lg:w-[779px]
-            lg:h-screen
+            lg:min-h-screen
           "
         >
           <img
