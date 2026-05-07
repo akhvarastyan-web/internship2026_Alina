@@ -1,7 +1,5 @@
-
 import * as React from 'react';
 import { useState } from 'react';
-import '../index.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { validate } from '../utils/validation';
@@ -14,8 +12,8 @@ export const SignUpForm = () => {
   const [error, setError] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState<FormValues>({
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    lastname: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -41,7 +39,7 @@ export const SignUpForm = () => {
     setError({});
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
@@ -53,12 +51,15 @@ export const SignUpForm = () => {
         setError({
           api: data?.message || 'Something went wrong. Please try again.',
         });
+
         return;
       }
 
-      localStorage.setItem('token', data.token);
-      navigate('/galleries');
-    } catch {
+      if (data.access_token) {
+        localStorage.setItem('token', data.access_token);
+        navigate('/');
+    }
+  } catch {
       setError({
         api: 'Network error. Please check your connection and try again.',
       });
@@ -107,18 +108,18 @@ export const SignUpForm = () => {
         </div>
 
           <InputField
-            id="firstName"
+            id="firstname"
             label="First Name"
             placeholder="Enter your first name"
-            value={values.firstName}
+            value={values.firstname}
             onChange={onInputChange}
             error={error.firstName}
           />
           <InputField
-            id="lastName"
+            id="lastname"
             label="Last Name"
             placeholder="Enter your last name"
-            value={values.lastName}
+            value={values.lastname}
             onChange={onInputChange}
             error={error.lastName}
           />

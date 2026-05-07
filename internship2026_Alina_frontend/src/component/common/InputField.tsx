@@ -35,12 +35,12 @@ export const InputField: React.FC<InputFieldProps> = ({
       <div className="relative">
       <input
         id={id}
-        name={name || id}
-        type={inputType}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full
+          name={name || id}
+          type={inputType}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`w-full
           height-form-elem
           rounded-lg
           border border-input

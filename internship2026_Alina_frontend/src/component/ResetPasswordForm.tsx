@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-import '../index.css';
 import { useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { FormErrors } from '../type/FormErrors';

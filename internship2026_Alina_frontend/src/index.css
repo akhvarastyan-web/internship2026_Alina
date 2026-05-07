@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap';
 
 @tailwind base;
 @tailwind components;
@@ -26,7 +26,6 @@
   --color-error-bold: rgba(211, 34, 27, 1);
   --color-warning: rgba(241, 194, 25, 1);
 }
-
 }
 
 
@@ -38,7 +37,6 @@ body {
     font-weight: 500;
     line-height: 1;
     letter-spacing: 0;
-
 }
 
 code {

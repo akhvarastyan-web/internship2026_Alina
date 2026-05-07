@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-import '../index.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { FormErrors } from '../type/FormErrors';
@@ -33,7 +32,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setIsLoading(true);
 
   try {
-    const response = await fetch('API_URL/login', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -49,11 +48,12 @@ const handleSubmit = async (e: React.FormEvent) => {
       throw new Error(data.message || 'Something went wrong');
     }
 
+const token = data.access_token;
 
     if (keepLoggedIn) {
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', token);
     } else {
-      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('token', token);
     }
 
     navigate('/');
