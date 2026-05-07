@@ -154,9 +154,9 @@ export const SignUpForm = () => {
           />
 
 
-          {error.apiError && (
+          {error.api && (
                <div className="text-error-DEFAULT text-s text-center">
-            {error.apiError}
+            {error.api}
            </div>
           )}
 
