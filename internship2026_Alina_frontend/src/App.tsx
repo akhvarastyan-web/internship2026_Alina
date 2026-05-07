@@ -1,10 +1,53 @@
-import './App.scss';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { GalleryPage } from './page/GalleryPage';
+import { SignUpPage } from './page/SignUpPage';
+import { SignInPage } from './page/SignInPage';
+import { AuthLayout } from './component/AuthLayout';
+import { ForgotPasswordPage } from './page/ForgotPasswordPage';
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+  if (!token) {
+    return <Navigate to="/auth/signin" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <GalleryPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/auth',
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "signup",
+        element: <SignUpPage />,
+      },
+      {
+        path: "signin",
+        element: <SignInPage />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
+]);
 
 export const App = () => {
-  return (
-    <div className="app">
-      <h1>Hello!</h1>
-      <p>world</p>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 };

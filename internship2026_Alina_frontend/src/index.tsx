@@ -20,7 +20,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root') as HTMLElement).render(
   <ReduxProvider store={store}>
     <QueryClientProvider client={queryClient}>
-      <App />
+        <App />
     </QueryClientProvider>
   </ReduxProvider>,
 );
