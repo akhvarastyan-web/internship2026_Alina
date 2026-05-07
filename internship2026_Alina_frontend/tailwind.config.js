@@ -29,13 +29,13 @@ export default {
           placeholder: '#a0b1a5',
         },
         accent: {
-          DEFAULT: #168b6c,
-          hover:   #1fb28b,
+          DEFAULT: '#168b6c',
+          hover:   '#1fb28b',
           soft:    '#edffef',
         },
         button: {
-          active: #0f654e,
-          disabled: #dbdada,
+          active: '#0f654e',
+          disabled: '#dbdada',
         },
         error: {
           DEFAULT: '#e95a54',

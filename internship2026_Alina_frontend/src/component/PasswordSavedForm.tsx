@@ -61,7 +61,6 @@ const navigate = useNavigate();
               text-s
               font-bold
               transition
-              bg-accent
               hover:bg-accent-hover
               active:bg-button-active"
           >

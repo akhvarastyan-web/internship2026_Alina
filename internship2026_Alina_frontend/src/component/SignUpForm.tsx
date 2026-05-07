@@ -6,6 +6,7 @@ import { validate } from '../utils/validation';
 import { FormErrors } from '../type/FormErrors';
 import { FormValues } from '../type/FormValues';
 import { handleChange } from '../utils/handleChange';
+import { Button } from './common/Button';
 
 export const SignUpForm = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export const SignUpForm = () => {
 
   const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
 
-  const isButtonDisabled = !isFormFilled || isLoading;
+
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +46,14 @@ export const SignUpForm = () => {
         body: JSON.stringify(values),
       });
 
+      console.log('STATUS', response.status);
+
+
+
       const data = await response.json();
+
+      console.log('DATA', data);
+
 
       if (!response.ok) {
         setError({
@@ -175,31 +183,11 @@ export const SignUpForm = () => {
                </Link>
           </p>
 
-          <button
-              type="submit"
-              disabled={isButtonDisabled}
-            className={`
-              height-form-elem
-              w-full
-              rounded-lg
-              bg-accent
-              text-white
-              text-s
-              font-bold
-              transition
-              ${
-                isButtonDisabled
-                  ? 'bg-button-disabled cursor-not-allowed'
-                  : 'bg-accent hover:bg-accent-hover ctive:bg-button-active'
-              }
-              `}
-          >
-            {isLoading ? (
-              <Loader2 className="loader-custom " />
-           ) : (
-             'Continue'
-            )}
-          </button>
+          <Button
+      text="Continue"
+      isLoading={isLoading}
+      disabled={!isFormFilled}
+    />
 
           <p className="text-s text-center text-text-secondary">
             Already have an account?{' '}

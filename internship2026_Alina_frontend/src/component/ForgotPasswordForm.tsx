@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { FormErrors } from '../type/FormErrors';
-import { Loader2, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { handleChange } from '../utils/handleChange';
+import { Button } from './common/Button';
 
 
 
@@ -19,7 +20,6 @@ export const ForgotPasswordForm = () => {
 
    const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
 
-  const isButtonDisabled = !isFormFilled || isLoading;
 
 
 
@@ -101,47 +101,28 @@ const handleSubmit = async (e: React.FormEvent) => {
             error={error.email}
           />
 
-          <button
-              type="submit"
-              disabled={isButtonDisabled}
-            className={`
-              height-form-elem
-              w-full
-              rounded-lg
-              bg-accent
-              text-white
-              text-s
-              font-bold
-              transition
-              ${
-                isButtonDisabled
-                ? 'bg-button-disabled cursor-not-allowed'
-                  : 'bg-accent hover:bg-accent-hover active:bg-button-active' }
-              `}
-          >
-            {isLoading ? (
-              <Loader2 className="loader-custom " />
-           ) : (
-             'Reset password'
-            )}
-          </button>
+          <Button
+            text="Reset"
+            isLoading={isLoading}
+            disabled={!isFormFilled}
+           />
 
           </div>
         </form>
-        {isModalOpen && (
+      {isModalOpen && (
       <div className="
       fixed inset-0 z-[100]
       flex items-center
       justify-center
-      bg-black/50
+      bg-black/70
       backdrop-blur-sm" >
         <div
            onClick={() => {
       setIsModalOpen(false);
       navigate('/auth/signin');
     }}
-          className="relative bg-main rounded-2xl flex flex-col items-center justify-center p-8 shadow-xl"
-          style={{ width: '443px', height: '310px' }}
+          className="relative bg-bg-main rounded-2xl flex flex-col items-center justify-center p-8 shadow-xl
+          w-[75vw] h-auto aspect-square lg:check-email-message-l "
         >
           <h2 className="mb-4">Check your email</h2>
           <p className="text-center text-text-secondary mb-8">
@@ -163,7 +144,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       </button>
         </div>
       </div>
-    )}
+      )}
     </>
   )
 }

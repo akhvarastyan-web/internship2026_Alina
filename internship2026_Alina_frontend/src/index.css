@@ -63,4 +63,8 @@ code {
  .eye-icon-custom {
     @apply w-[20px] h-[20px];
   }
+
+  .check-email-message-l {
+     @apply w-[443px] h-[310px];
+  }
 }

@@ -4,6 +4,9 @@ import { SignUpPage } from './page/SignUpPage';
 import { SignInPage } from './page/SignInPage';
 import { AuthLayout } from './component/AuthLayout';
 import { ForgotPasswordPage } from './page/ForgotPasswordPage';
+import { ResetPasswordPage } from './page/ResetPasswordPage';
+import { PasswordSavedPage } from './page/PasswordSavedPage';
+
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -15,9 +18,19 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: (
       <ProtectedRoute>
         <GalleryPage />
@@ -26,24 +39,36 @@ const router = createBrowserRouter([
   },
   {
     path: '/auth',
-    element: <AuthLayout />,
+    element: (
+      <PublicRoute>
+        <AuthLayout />
+      </PublicRoute>
+    ),
     children: [
       {
-        path: "signup",
+        path: 'signup',
         element: <SignUpPage />,
       },
       {
-        path: "signin",
+        path: 'signin',
         element: <SignInPage />,
       },
       {
-        path: "forgot-password",
+        path: 'forgot-password',
         element: <ForgotPasswordPage />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPasswordPage />,
+      },
+      {
+        path: 'saved-password',
+        element: <PasswordSavedPage />,
       },
     ],
   },
   {
-    path: "*",
+    path: '*',
     element: <Navigate to="/" replace />,
   },
 ]);

@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { FormErrors } from '../type/FormErrors';
-import { Loader2, Square, CheckSquare } from 'lucide-react';
+import { Square, CheckSquare } from 'lucide-react';
 import { handleChange } from '../utils/handleChange';
+import { Button } from './common/Button';
 
 
 
@@ -19,7 +20,6 @@ export const SignInForm = () => {
 
    const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
 
-  const isButtonDisabled = !isFormFilled || isLoading;
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
 const toggleKeepLoggedIn = () => {
@@ -156,30 +156,11 @@ const token = data.access_token;
 
           </div>
 
-          <button
-              type="submit"
-              disabled={isButtonDisabled}
-            className={`
-              height-form-elem
-              w-full
-              rounded-lg
-              bg-accent
-              text-white
-              text-s
-              font-bold
-              transition
-              ${
-                isButtonDisabled
-                ? 'bg-button-disabled cursor-not-allowed'
-                  : 'bg-accent hover:bg-accent-hover active:bg-button-active'}
-              `}
-          >
-            {isLoading ? (
-              <Loader2 className="loader-custom " />
-           ) : (
-             'Sign In'
-            )}
-          </button>
+          <Button
+      text="Sign in"
+      isLoading={isLoading}
+      disabled={!isFormFilled}
+    />
 
 
           <p className="text-s text-center text-text-secondary">
