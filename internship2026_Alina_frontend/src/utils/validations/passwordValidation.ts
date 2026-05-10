@@ -1,6 +1,5 @@
-import { FormErrors } from '../type/FormErrors';
-
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+import { FormErrors } from '../../type/FormErrors';
+import { passwordRegex } from './inputRegex';
 
 export function validateResetPassword(values: {
   password?: string;

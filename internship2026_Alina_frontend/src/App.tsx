@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom';
 import { GalleryPage } from './page/GalleryPage';
 import { SignUpPage } from './page/SignUpPage';
 import { SignInPage } from './page/SignInPage';
@@ -62,7 +66,7 @@ const router = createBrowserRouter([
         element: <ResetPasswordPage />,
       },
       {
-        path: 'saved-password',
+        path: 'password-saved',
         element: <PasswordSavedPage />,
       },
     ],

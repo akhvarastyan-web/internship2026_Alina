@@ -1,17 +1,19 @@
-import * as React from 'react';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { InputField } from './common/InputField';
-import { validate } from '../utils/validation';
+import { validate } from '../utils/validations/validation';
 import { FormErrors } from '../type/FormErrors';
 import { FormValues } from '../type/FormValues';
 import { handleChange } from '../utils/handleChange';
 import { Button } from './common/Button';
+import { Square, CheckSquare } from 'lucide-react';
+import { PasswordChecklist } from './common/PasswordChecklist';
+import { useAuthMutations } from '../utils/mutations/useAuthMutations';
+import { useFormFilled } from '../hooks/useFormFilled';
 
 export const SignUpForm = () => {
-  const navigate = useNavigate();
   const [error, setError] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [values, setValues] = useState<FormValues>({
     firstname: '',
     lastname: '',
@@ -19,13 +21,18 @@ export const SignUpForm = () => {
     password: '',
     confirmPassword: '',
   });
+  const {
+    registerMutation: { mutate, isPending },
+  } = useAuthMutations();
 
-  const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
+  const isFormFilled = useFormFilled(values);
+
+  const toggleKeepLoggedIn = () => {
+    setKeepLoggedIn(prev => !prev);
+  };
 
 
-
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const validationErrors = validate(values);
@@ -36,43 +43,30 @@ export const SignUpForm = () => {
       return;
     }
 
-    setIsLoading(true);
     setError({});
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
+    const { confirmPassword, ...registerData } = values;
 
-      const data = await response.json();
-
-
-      if (!response.ok) {
-        setError({
-          api: data?.message || 'Something went wrong. Please try again.',
-        });
-
-        return;
-      }
-
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
-        navigate('/');
-    }
-  } catch {
-      setError({
-        api: 'Network error. Please check your connection and try again.',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    mutate(
+      {
+        registerData,
+        keepLoggedIn,
+      },
+      {
+        onError: err => {
+          if (err instanceof Error) {
+            setError({
+              api: err.message,
+            });
+          }
+        },
+      },
+    );
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e, setValues, setError, error);
-    };
+    handleChange(e, setValues, setError, error);
+  };
 
   return (
     <form
@@ -153,6 +147,39 @@ export const SignUpForm = () => {
             error={error.confirmPassword}
           />
 
+          <PasswordChecklist
+              value={values.password}
+              confirmValue={values.confirmPassword}
+           />
+
+          <div className="flex justify-between items-center">
+         <div
+            role="checkbox"
+            aria-checked={keepLoggedIn}
+            tabIndex={0}
+            onClick={toggleKeepLoggedIn}
+            className="flex items-center gap-2 cursor-pointer select-none
+            focus-visible:ring-2 focus-visible:ring-accent
+            rounded-sm outline-none"
+            onKeyDown={event => {
+              if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                toggleKeepLoggedIn();
+              }
+            }}
+          >
+          {keepLoggedIn ? (
+            <CheckSquare className="check-box-icon text-accent" />
+          ) : (
+            <Square className="check-box-icon text-text-secondary" />
+          )}
+
+          <p className="text-s text-text-secondary">
+            Keep me logged in
+          </p>
+        </div>
+      </div>
+
 
           {error.api && (
                <div className="text-error-DEFAULT text-s text-center">
@@ -179,8 +206,8 @@ export const SignUpForm = () => {
 
           <Button
       text="Continue"
-      isLoading={isLoading}
-      disabled={!isFormFilled}
+      isLoading={isPending}
+      disabled={!isFormFilled || isPending}
     />
 
           <p className="text-s text-center text-text-secondary">

@@ -1,5 +1,4 @@
-
-import { FormFooter } from '../component/Footer';
+import { FormFooter } from './FormFooter';
 import { useLocation, Outlet } from 'react-router-dom';
 
 

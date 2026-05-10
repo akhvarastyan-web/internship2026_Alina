@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
@@ -6,46 +5,47 @@ import { FormErrors } from '../type/FormErrors';
 import { X } from 'lucide-react';
 import { handleChange } from '../utils/handleChange';
 import { Button } from './common/Button';
-
+import { useAuthMutations } from '../utils/mutations/useAuthMutations';
+import { useFormFilled } from '../hooks/useFormFilled';
 
 
 export const ForgotPasswordForm = () => {
   const navigate = useNavigate();
    const [error, setError] = useState<FormErrors>({});
-   const [isLoading, setIsLoading] = useState(false);
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [values, setValues] = useState({
     email: '',
   });
 
-   const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
+  const {
+    forgotPasswordMutation: { mutate, isPending },
+  } = useAuthMutations();
 
+  const isFormFilled = useFormFilled(values);
 
-
-
-const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
+
   setError({});
-  setIsLoading(true);
 
-  try {
-    const response = await fetch('API_URL/forgot-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: values.email }),
-    });
+  mutate(values.email, {
+    onSuccess: () => {
+      setIsModalOpen(true);
+    },
 
-    if (!response.ok) {
-      throw new Error('Error! Please check the entered information');
-    }
-
-    setIsModalOpen(true);
-  } catch (err: any) {
-    setError({ email: err.message });
-  } finally {
-    setIsLoading(false);
-  }
+    onError: (err) => {
+      if (err instanceof Error) {
+        setError({ email: err.message });
+      }
+    },
+  });
 };
+
+const closeModalAndNavigate = () => {
+    setIsModalOpen(false);
+    navigate('/auth/signin');
+  };
+
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e, setValues, setError, error);
@@ -59,8 +59,8 @@ const handleSubmit = async (e: React.FormEvent) => {
         flex flex-col gap-form-large
         w-[clamp(280px,calc(100vw*(343/375)),400px)]
         lg:w-[clamp(320px,calc(100vw*(411/1440)),480px)]
-        ">
-
+        "
+      >
         <div className="
         flex flex-col gap-form-small" >
 
@@ -103,8 +103,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
           <Button
             text="Reset"
-            isLoading={isLoading}
-            disabled={!isFormFilled}
+            isLoading={isPending}
+            disabled={!isFormFilled || isPending}
            />
 
           </div>
@@ -129,10 +129,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             A link has been sent to your email, please check.
           </p>
           <button
-        onClick={() => {
-          setIsModalOpen(false);
-          navigate('/auth/signin');
-        }}
+        onClick={closeModalAndNavigate}
         className="
           absolute top-6 right-6
           text-text-secondary hover:text-accent

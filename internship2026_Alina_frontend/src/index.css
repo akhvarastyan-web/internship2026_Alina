@@ -67,4 +67,8 @@ code {
   .check-email-message-l {
      @apply w-[443px] h-[310px];
   }
+
+  .check-box-icon {
+  @apply w-5 h-5;
+}
 }
