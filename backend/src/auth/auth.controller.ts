@@ -4,9 +4,14 @@ import { LoginDto } from '../users/dto/login.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { User } from '../users/user.entity';
-import { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import type { RequestWithUser } from '../common/types/request-with-user.interface';
 import {
   Controller,
   Post,
@@ -17,10 +22,7 @@ import {
   Patch,
 } from '@nestjs/common';
 
-interface RequestWithUser extends ExpressRequest {
-  user: User & { id: number };
-}
-
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(

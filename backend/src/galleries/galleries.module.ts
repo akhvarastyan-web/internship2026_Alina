@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { GalleriesController } from './galleries.controller';
 import { GalleriesService } from './galleries.service';
-import { Gallery } from './galleries.entity';
+import { Gallery } from './gallery.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Gallery])],

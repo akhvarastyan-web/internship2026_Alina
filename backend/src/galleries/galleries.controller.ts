@@ -1,11 +1,22 @@
 import { GalleriesService } from './galleries.service';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
-import { ApiOperation } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 
-
+@ApiTags('Galleries')
 @Controller('galleries')
+@UseGuards(JwtAuthGuard)
 export class GalleriesController {
   constructor(private readonly galleriesService: GalleriesService) {}
 
@@ -29,10 +40,7 @@ export class GalleriesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update gallery by ID' })
-  update(
-    @Param('id') id: string, 
-    @Body() updateGalleryDto: UpdateGalleryDto
-  ) {
+  update(@Param('id') id: string, @Body() updateGalleryDto: UpdateGalleryDto) {
     return this.galleriesService.update(+id, updateGalleryDto);
   }
 

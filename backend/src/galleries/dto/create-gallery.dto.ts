@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { 
-  IsString, 
+import {
+  IsString,
   IsNotEmpty,
-  IsOptional, 
-  MinLength, 
+  IsOptional,
+  MinLength,
   MaxLength,
- } from 'class-validator';
+} from 'class-validator';
 
 export class CreateGalleryDto {
   @ApiProperty()

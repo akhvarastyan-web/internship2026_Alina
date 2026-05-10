@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Gallery } from './galleries.entity';
+import { Gallery } from './gallery.entity';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 
@@ -31,7 +31,10 @@ export class GalleriesService {
     return gallery;
   }
 
-  async update(id: number, updateGalleryDto: UpdateGalleryDto): Promise<Gallery> {
+  async update(
+    id: number,
+    updateGalleryDto: UpdateGalleryDto,
+  ): Promise<Gallery> {
     const gallery = await this.findOne(id);
     const updated = Object.assign(gallery, updateGalleryDto);
     return await this.galleryRepository.save(updated);
