@@ -10,6 +10,9 @@ import { AuthLayout } from './component/AuthLayout';
 import { ForgotPasswordPage } from './page/ForgotPasswordPage';
 import { ResetPasswordPage } from './page/ResetPasswordPage';
 import { PasswordSavedPage } from './page/PasswordSavedPage';
+import { ProfilePage } from './page/ProfilePage';
+import { DashboardPage } from './page/DashboardPage';
+
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -37,9 +40,19 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <ProtectedRoute>
-        <GalleryPage />
+        <DashboardPage />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: 'galleries',
+        element: <GalleryPage />,
+      },
+      {
+        path: 'profile-settings',
+        element: <ProfilePage />,
+      },
+    ],
   },
   {
     path: '/auth',

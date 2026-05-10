@@ -71,4 +71,18 @@ code {
   .check-box-icon {
   @apply w-5 h-5;
 }
+
+  .profile-sidebar-w {
+  @apply w-[290px];
+}
+
+.size-icon {
+  @apply w-[24px] h-[24px];
+
+}
+
+.chevron-icon {
+  @apply w-[16px] h-[16px];
+
+}
 }

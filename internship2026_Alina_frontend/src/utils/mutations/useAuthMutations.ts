@@ -149,11 +149,56 @@ export const useAuthMutations = () => {
     },
 
     onSuccess: () => {
-      navigate('/auth/password-saved');
+      onSuccess();
+    },
+  });
+
+  const changeNameMutation = useMutation({
+    mutationFn: async (userData: { firstname: string; lastname: string }) => {
+      const response = await fetch('/api/user/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Update failed');
+      }
+
+      return response.json();
+    },
+
+    onSuccess: () => {
+      console.log('Y');
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (data: { oldPassword: string; newPassword: string }) => {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change password');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      onSuccess();;
+    },
+    onError: (error: Error) => {
+      alert(error.message);
     },
   });
 
   return {
+    changeNameMutation,
+    changePasswordMutation,
     registerMutation,
     forgotPasswordMutation,
     loginMutation,

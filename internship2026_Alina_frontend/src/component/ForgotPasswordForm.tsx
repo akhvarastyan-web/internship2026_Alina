@@ -7,6 +7,7 @@ import { handleChange } from '../utils/handleChange';
 import { Button } from './common/Button';
 import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../hooks/useFormFilled';
+import { FormWrapper } from './common/FormWrapper';
 
 
 export const ForgotPasswordForm = () => {
@@ -53,14 +54,7 @@ const closeModalAndNavigate = () => {
 
   return (
     <>
-     <form
-     onSubmit={handleSubmit}
-        className="
-        flex flex-col gap-form-large
-        w-[clamp(280px,calc(100vw*(343/375)),400px)]
-        lg:w-[clamp(320px,calc(100vw*(411/1440)),480px)]
-        "
-      >
+     <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
         <div className="
         flex flex-col gap-form-small" >
 
@@ -108,7 +102,8 @@ const closeModalAndNavigate = () => {
            />
 
           </div>
-        </form>
+        </FormWrapper>
+
       {isModalOpen && (
       <div className="
       fixed inset-0 z-[100]

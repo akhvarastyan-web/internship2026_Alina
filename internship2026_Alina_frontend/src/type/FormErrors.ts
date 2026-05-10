@@ -5,4 +5,6 @@ export interface FormErrors {
   password?: string;
   confirmPassword?: string;
   api?: string;
+  oldPassword?: string;
+  newPassword?: string;
 }

@@ -10,6 +10,7 @@ import { Square, CheckSquare } from 'lucide-react';
 import { PasswordChecklist } from './common/PasswordChecklist';
 import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../hooks/useFormFilled';
+import { FormWrapper } from './common/FormWrapper';
 
 export const SignUpForm = () => {
   const [error, setError] = useState<FormErrors>({});
@@ -69,13 +70,7 @@ export const SignUpForm = () => {
   };
 
   return (
-    <form
-        onSubmit={handleSubmit}
-        className="
-        flex flex-col gap-form
-        w-[clamp(280px,calc(100vw*(343/375)),400px)]
-        lg:w-[clamp(320px,calc(100vw*(411/1440)),480px)]
-        ">
+    <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
 
         <h1
           className="
@@ -216,7 +211,7 @@ export const SignUpForm = () => {
               Sign In
             </Link>
           </p>
-        </form>
+        </FormWrapper>
 
   )
 }
