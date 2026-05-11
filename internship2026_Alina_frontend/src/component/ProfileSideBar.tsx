@@ -3,6 +3,7 @@ import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLogOut } from '../utils/LogOutFunction';
 
+
 export const ProfileSideBar = ({ onClose }: { onClose?: () => void }) => {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const { logout } = useLogOut();

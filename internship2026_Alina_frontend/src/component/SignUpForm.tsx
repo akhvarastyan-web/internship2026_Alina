@@ -11,6 +11,7 @@ import { PasswordChecklist } from './common/PasswordChecklist';
 import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { FormWrapper } from './common/FormWrapper';
+import { LargeHeader } from './common/Headers';
 
 export const SignUpForm = () => {
   const [error, setError] = useState<FormErrors>({});
@@ -72,17 +73,7 @@ export const SignUpForm = () => {
   return (
     <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-
-             lg:text-left
-          "
-        >
-          Sign Up
-        </h1>
+       <LargeHeader>Sign Up</LargeHeader>
 
         <div className="mb-[clamp(16px,calc(100vw*(20/375)),24px)]">
           <span

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { ProfileSideBar } from './ProfileSideBar';
+import { Header } from './common/Headers';
 
 
 export const Dashboard = () => {
@@ -43,9 +44,8 @@ export const Dashboard = () => {
   <div className="flex items-center gap-[50px] p-4 lg:px-[30px] lg:py-[22px]">
 
     <div className="flex-1 min-w-0">
-      <h1 className="overflow-hidden text-lg font-bold">
-        {getTitle()}
-      </h1>
+      <Header>{getTitle()}</Header>
+
     </div>
 
     <div className="shrink-0">

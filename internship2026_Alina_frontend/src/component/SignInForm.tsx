@@ -8,6 +8,7 @@ import { Button } from './common/Button';
 import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { FormWrapper } from './common/FormWrapper';
+import { LargeHeader } from './common/Headers';
 
 
 
@@ -58,16 +59,7 @@ const handleSubmit = (e: React.FormEvent) => {
         <div className="
         flex flex-col gap-form-small" >
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-             lg:text-left
-          "
-        >
-          Sign In
-        </h1>
+        <LargeHeader>Sign In</LargeHeader>
 
           <p
             className="

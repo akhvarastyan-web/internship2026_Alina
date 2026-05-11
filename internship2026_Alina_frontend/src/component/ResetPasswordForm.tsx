@@ -9,6 +9,7 @@ import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { FormWrapper } from './common/FormWrapper';
 import { PasswordChecklist } from './common/PasswordChecklist';
+import { LargeHeader } from './common/Headers';
 
 
 export const ResetPasswordForm = () => {
@@ -59,16 +60,7 @@ const handleSubmit = (e: React.FormEvent) => {
      <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
 
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-             lg:text-left
-          "
-        >
-          Set New Password
-        </h1>
+       <LargeHeader>Set New Password</LargeHeader>
 
 
         <div className="

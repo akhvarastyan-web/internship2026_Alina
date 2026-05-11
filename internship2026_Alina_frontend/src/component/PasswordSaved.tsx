@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { FormWrapper } from './common/FormWrapper';
+import { LargeHeader } from './common/Headers';
 
 
 export const PasswordSavedForm = () => {
@@ -17,16 +18,7 @@ const navigate = useNavigate();
         <div className="
         flex flex-col gap-form-small " >
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-
-          "
-        >
-          New password has been saved
-        </h1>
+        <LargeHeader>New password has been saved</LargeHeader> 
 
           <p
             className="

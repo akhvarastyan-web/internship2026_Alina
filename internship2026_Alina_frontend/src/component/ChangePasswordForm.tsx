@@ -9,6 +9,8 @@ import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { validate } from '../utils/validations/validation';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { PasswordChecklist } from './common/PasswordChecklist';
+import { Header } from './common/Headers';
+
 
 interface ChangePasswordFormProps {
   onSuccess: () => void;
@@ -78,20 +80,9 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
         <div className="
         flex flex-col gap-form-small" >
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-             lg:text-left
-          "
-        >
-          Acccount settings
-        </h1>
-
+        <Header>Change Password</Header>
           <p
             className="
-              text-l
               font-400
               text-text-secondary
             "
