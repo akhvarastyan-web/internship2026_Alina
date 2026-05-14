@@ -1,6 +1,5 @@
-import { PasswordSavedForm } from '../component/PasswordSaved';
-
+import { PasswordSaved } from '../component/auth/PasswordSaved';
 
 export const PasswordSavedPage = () => {
-  return <PasswordSavedForm />;
+  return <PasswordSaved />;
 };

@@ -2,16 +2,17 @@ import { FormErrors } from '../../type/FormErrors';
 import { FormValues } from '../../type/FormValues';
 import { passwordRegex, nameRegex, emailRegex } from './inputRegex';
 
-
 export function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};
 
   if (!nameRegex.test(values.firstname)) {
-    errors.firstname = 'First name must be 2–50 characters and contain no numbers.';
+    errors.firstname =
+      'First name must be 2–50 characters and contain no numbers.';
   }
 
   if (!nameRegex.test(values.lastname)) {
-    errors.lastname = 'Last name must be 2–50 characters and contain no numbers.';
+    errors.lastname =
+      'Last name must be 2–50 characters and contain no numbers.';
   }
 
   if (!emailRegex.test(values.email)) {

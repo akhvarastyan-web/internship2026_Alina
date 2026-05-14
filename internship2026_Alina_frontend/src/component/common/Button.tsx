@@ -1,7 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import { ButtonProps } from '../../type/ButtonProps';
 
-
 export const Button = ({
   text,
   isLoading = false,
