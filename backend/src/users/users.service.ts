@@ -18,11 +18,9 @@ export class UsersService {
   ) {}
 
   async create(dto: RegisterDto): Promise<User> {
-    console.log('dto:', dto);
     const existingUser = await this.usersRepository.findOne({
       where: { email: dto.email },
     });
-    console.log('existingUser:', existingUser);
 
     if (existingUser) {
       throw new ConflictException('A user with this email already exists.');
@@ -60,16 +58,26 @@ export class UsersService {
         where: { email: dto.email },
       });
       if (emailOwner && emailOwner.id !== id) {
-        throw new ConflictException('Email is already in use by another account');
+        throw new ConflictException(
+          'Email is already in use by another account',
+        );
       }
     }
 
+    const updateData = { ...dto };
+
     if (dto.password !== undefined) {
       const salt = await bcrypt.genSalt();
-      dto.password = await bcrypt.hash(dto.password, salt);
+      const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+      updateData.password = hashedPassword;
     }
 
-    Object.assign(user, dto);
-    return this.usersRepository.save(user);
+    const updatedUser = {
+      ...user,
+      ...updateData,
+    };
+
+    return this.usersRepository.save(updatedUser);
   }
 }

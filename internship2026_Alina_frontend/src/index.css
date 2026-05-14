@@ -1,0 +1,70 @@
+@import 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+  --color-bg-main: #ffffff;
+  --color-bg-soft: #fcfcfc;
+  --color-bg-element: #f3f3f3;
+
+  --color-border-light: #ededed;
+  --color-border-input: #dbdada;
+
+  --color-text-primary: #161616;
+  --color-text-secondary: #878787;
+  --color-text-placeholder: #a0b1a5;
+
+  --color-accent: #1fb28b;
+  --color-accent-hover: #168b6c;
+  --color-accent-soft: #edffef;
+
+  --color-error: rgba(233, 90, 84, 1);
+  --color-error-soft: rgba(239, 131, 127, 1);
+  --color-error-bold: rgba(211, 34, 27, 1);
+  --color-warning: rgba(241, 194, 25, 1);
+}
+}
+
+
+
+body {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+@layer components {
+  .gap-form {
+    gap: 24px;
+  }
+  .height-form-elem {
+    height: 50px;
+  }
+
+  .gap-form-large {
+    gap: 36px;
+  }
+
+  .gap-form-small {
+    gap: 8px;
+  }
+
+ .eye-icon-custom {
+    @apply w-[20px] h-[20px];
+  }
+
+  .check-email-message-l {
+     @apply w-[443px] h-[310px];
+  }
+}
