@@ -1,5 +1,6 @@
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FormWrapper } from './common/FormWrapper';
+import { LargeHeader } from './common/Headers';
 
 
 export const PasswordSavedForm = () => {
@@ -12,31 +13,16 @@ const navigate = useNavigate();
 
 
   return (
-     <form
-     onSubmit={handleSubmit}
-        className="
-        flex flex-col gap-form-large
-        w-[clamp(280px,calc(100vw*(343/375)),400px)]
-        lg:w-[clamp(320px,calc(100vw*(411/1440)),480px)]
-        ">
+     <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
 
         <div className="
-        flex flex-col gap-form-small" >
+        flex flex-col gap-form-small " >
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-             lg:text-left
-          "
-        >
-          New password has been saved
-        </h1>
+        <LargeHeader>New password has been saved</LargeHeader> 
 
           <p
             className="
-              text-l
+              text-center
               font-400
               text-text-secondary
             "
@@ -69,6 +55,6 @@ const navigate = useNavigate();
           </button>
 
           </div>
-        </form>
+        </FormWrapper>
   )
 }

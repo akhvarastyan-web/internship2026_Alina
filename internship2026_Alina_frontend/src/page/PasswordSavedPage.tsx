@@ -1,4 +1,4 @@
-import { PasswordSavedForm } from '../component/PasswordSavedForm';
+import { PasswordSavedForm } from '../component/PasswordSaved';
 
 
 export const PasswordSavedPage = () => {

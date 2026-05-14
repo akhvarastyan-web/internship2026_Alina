@@ -1,24 +1,28 @@
-import * as React from 'react';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { FormErrors } from '../type/FormErrors';
 import { Square, CheckSquare } from 'lucide-react';
 import { handleChange } from '../utils/handleChange';
 import { Button } from './common/Button';
+import { useAuthMutations } from '../utils/mutations/useAuthMutations';
+import { useFormFilled } from '../hooks/useFormFilled';
+import { FormWrapper } from './common/FormWrapper';
+import { LargeHeader } from './common/Headers';
 
 
 
 export const SignInForm = () => {
-  const navigate = useNavigate();
    const [error, setError] = useState<FormErrors>({});
-   const [isLoading, setIsLoading] = useState(false);
    const [values, setValues] = useState({
     email: '',
     password: '',
   });
+  const {
+  loginMutation: { mutate, isPending },
+} = useAuthMutations();
 
-   const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
+ const isFormFilled = useFormFilled(values);
 
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
@@ -26,71 +30,36 @@ const toggleKeepLoggedIn = () => {
   setKeepLoggedIn(prev => !prev);
 };
 
-const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError({});
-    setIsLoading(true);
 
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: values.email,
-        password: values.password
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-
-      throw new Error(data.message || 'Something went wrong');
-    }
-
-const token = data.access_token;
-
-    if (keepLoggedIn) {
-      localStorage.setItem('token', token);
-    } else {
-      sessionStorage.setItem('token', token);
-    }
-
-    navigate('/');
-
-  } catch (err: any) {
-    setError({ api: err.message || 'Network error' });
-  } finally {
-    setIsLoading(false);
-  }
-};
+    mutate(
+      {
+        loginData: { email: values.email, password: values.password },
+        keepLoggedIn,
+      },
+      {
+        onError: err => {
+          if (err instanceof Error) {
+            setError({ api: err.message });
+          }
+        },
+      },
+    );
+  };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e, setValues, setError, error);
   };
 
   return (
-     <form
-     onSubmit={handleSubmit}
-        className="
-        flex flex-col gap-form-large
-        w-[clamp(280px,calc(100vw*(343/375)),400px)]
-        lg:w-[clamp(320px,calc(100vw*(411/1440)),480px)]
-        ">
+    <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
 
         <div className="
         flex flex-col gap-form-small" >
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-             lg:text-left
-          "
-        >
-          Sign In
-        </h1>
+        <LargeHeader>Sign In</LargeHeader>
 
           <p
             className="
@@ -130,13 +99,24 @@ const token = data.access_token;
           <div className="
         flex justify-between items-center" >
             <div
-  onClick={toggleKeepLoggedIn}
-  className="flex items-center gap-2 cursor-pointer select-none"
->
+            role="checkbox"
+            aria-checked={keepLoggedIn}
+            tabIndex={0}
+            onClick={toggleKeepLoggedIn}
+            className="flex items-center gap-2 cursor-pointer select-none
+            focus-visible:ring-2 focus-visible:ring-accent
+            rounded-sm outline-none"
+            onKeyDown={event => {
+              if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                toggleKeepLoggedIn();
+              }
+            }}
+          >
   {keepLoggedIn ? (
-    <CheckSquare className="w-5 h-5 text-accent" />
+    <CheckSquare className="check-box-icon text-accent" />
   ) : (
-    <Square className="w-5 h-5 text-text-secondary" />
+    <Square className="check-box-icon text-text-secondary" />
   )}
 
   <p className="text-s text-text-secondary">
@@ -146,10 +126,10 @@ const token = data.access_token;
           <div>
           <p className="text-s text-text-secondary">
             <Link
-              to="/auth/signup"
+              to="/auth/forgot-password"
               className="text-accent-hover hover:underline"
             >
-              Forget password?
+              Forgot password?
             </Link>
           </p>
           </div>
@@ -158,19 +138,19 @@ const token = data.access_token;
 
           <Button
       text="Sign in"
-      isLoading={isLoading}
-      disabled={!isFormFilled}
+      isLoading={isPending}
+      disabled={!isFormFilled || isPending}
     />
 
 
           <p className="text-s text-center text-text-secondary">
-            Not registred yet? {' '}
+            Not registered yet? {' '}
             <Link to="/auth/signup" className="text-accent-hover font-medium hover:underline">
               Create an Account
             </Link>
           </p>
           </div>
-        </form>
+        </FormWrapper>
 
   )
 }

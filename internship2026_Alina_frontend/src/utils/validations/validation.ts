@@ -1,9 +1,7 @@
-import { FormErrors } from '../type/FormErrors';
-import { FormValues } from '../type/FormValues';
+import { FormErrors } from '../../type/FormErrors';
+import { FormValues } from '../../type/FormValues';
+import { passwordRegex, nameRegex, emailRegex } from './inputRegex';
 
-const nameRegex = /^[^\d]{2,50}$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 export function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};

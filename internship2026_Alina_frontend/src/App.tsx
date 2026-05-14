@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom';
 import { GalleryPage } from './page/GalleryPage';
 import { SignUpPage } from './page/SignUpPage';
 import { SignInPage } from './page/SignInPage';
@@ -6,6 +10,9 @@ import { AuthLayout } from './component/AuthLayout';
 import { ForgotPasswordPage } from './page/ForgotPasswordPage';
 import { ResetPasswordPage } from './page/ResetPasswordPage';
 import { PasswordSavedPage } from './page/PasswordSavedPage';
+import { ProfilePage } from './page/ProfilePage';
+import { DashboardPage } from './page/DashboardPage';
+
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -33,9 +40,19 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <ProtectedRoute>
-        <GalleryPage />
+        <DashboardPage />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: 'galleries',
+        element: <GalleryPage />,
+      },
+      {
+        path: 'profile-settings',
+        element: <ProfilePage />,
+      },
+    ],
   },
   {
     path: '/auth',
@@ -62,7 +79,7 @@ const router = createBrowserRouter([
         element: <ResetPasswordPage />,
       },
       {
-        path: 'saved-password',
+        path: 'password-saved',
         element: <PasswordSavedPage />,
       },
     ],

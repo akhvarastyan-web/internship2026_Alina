@@ -1,68 +1,55 @@
-import * as React from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { InputField } from './common/InputField';
 import { FormErrors } from '../type/FormErrors';
 import { handleChange } from '../utils/handleChange';
-import { validateResetPassword } from '../utils/passwordValidation';
+import { validateResetPassword } from '../utils/validations/passwordValidation';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from './common/Button';
-
+import { useAuthMutations } from '../utils/mutations/useAuthMutations';
+import { useFormFilled } from '../hooks/useFormFilled';
+import { FormWrapper } from './common/FormWrapper';
+import { PasswordChecklist } from './common/PasswordChecklist';
+import { LargeHeader } from './common/Headers';
 
 
 export const ResetPasswordForm = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-
    const [error, setError] = useState<FormErrors>({});
-   const [isLoading, setIsLoading] = useState(false);
    const [values, setValues] = useState({
     password: '',
     confirmPassword: '',
   });
+  const {
+    resetPasswordMutation: { mutate, isPending },
+  } = useAuthMutations();
 
-   const isFormFilled = Object.values(values).every(value => value.trim().length > 0);
+   const isFormFilled = useFormFilled(values);
 
 
-
-
-const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError({});
 
     const validationErrors = validateResetPassword(values);
 
     if (Object.keys(validationErrors).length > 0) {
       setError(validationErrors);
 
-    return;
-  }
-
-  setIsLoading(true);
-
-    try {
-      const response = await fetch('API_URL/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          password: values.password,
-          token: token,
-        }),
-      });
-
-
-      if (!response.ok) {
-        throw new Error('Link expired or invalid token');
-      }
-
-      navigate('/auth/password-saved');
-
-    } catch (err: any) {
-      setError({ api: err.message });
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    setError({});
+
+    mutate(
+      { password: values.password, token },
+      {
+        onError: err => {
+          if (err instanceof Error) {
+            setError({ api: err.message });
+          }
+        },
+      },
+    );
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,26 +57,10 @@ const handleSubmit = async (e: React.FormEvent) => {
   };
 
   return (
-     <form
-     onSubmit={handleSubmit}
-        className="
-        flex flex-col gap-form-large
-        w-[clamp(280px,calc(100vw*(343/375)),400px)]
-        lg:w-[clamp(320px,calc(100vw*(411/1440)),480px)]
-        "
-        >
+     <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
 
 
-        <h1
-          className="
-            text-center
-            font-bold
-            text-[clamp(24px,calc(100vw*(28/375)),32px)]
-             lg:text-left
-          "
-        >
-          Set New Password
-        </h1>
+       <LargeHeader>Set New Password</LargeHeader>
 
 
         <div className="
@@ -114,13 +85,18 @@ const handleSubmit = async (e: React.FormEvent) => {
            error={error.confirmPassword}
           />
 
+          <PasswordChecklist
+            value={values.password}
+            confirmValue={values.confirmPassword}
+          />
+
           <Button
              text="Save"
-             isLoading={isLoading}
-             disabled={!isFormFilled}
+             isLoading={isPending}
+             disabled={!isFormFilled || isPending}
             />
 
           </div>
-        </form>
+         </FormWrapper>
   )
 }

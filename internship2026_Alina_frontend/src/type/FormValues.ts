@@ -5,3 +5,9 @@ export interface FormValues {
   password: string;
   confirmPassword: string;
 }
+
+export interface PasswordFormValues {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
