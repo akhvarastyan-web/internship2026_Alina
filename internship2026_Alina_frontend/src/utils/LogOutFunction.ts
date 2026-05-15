@@ -1,14 +1,30 @@
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../store/slices/auth/auth.slice';
+import { useLogoutMutation } from '../store/api/authApi';
 
 export const useLogOut = () => {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
+  const [serverLogout] = useLogoutMutation();
 
-    navigate('/login', { replace: true });
+  const logoutUser = async () => {
+    try {
+      await serverLogout().unwrap();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      dispatch(logout());
+
+      navigate('/auth/signin', {
+        replace: true,
+      });
+    }
   };
 
-  return { logout };
+  return {
+    logout: logoutUser,
+  };
 };

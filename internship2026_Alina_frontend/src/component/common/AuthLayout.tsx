@@ -1,14 +1,14 @@
 import { FormFooter } from './FormFooter';
 import { useLocation, Outlet } from 'react-router-dom';
 
-
 export const AuthLayout = () => {
   const location = useLocation();
 
   const isSpecialForm = location.pathname.includes('signup');
 
   return (
-    <main className="
+    <main
+      className="
       min-h-screen bg-bg-main
       flex
       lg:flex-row
@@ -16,7 +16,8 @@ export const AuthLayout = () => {
       lg:overflow-hidden
       "
     >
-      <div className={`
+      <div
+        className={`
 
           w-full
           flex flex-col
@@ -37,27 +38,27 @@ export const AuthLayout = () => {
       >
         <Outlet />
         <FormFooter />
-        </div>
+      </div>
 
-        <div
-          className="
+      <div
+        className="
             hidden
             relative
             lg:block
             lg:w-[779px]
             lg:min-h-screen
           "
-        >
-          <img
-            src="/frontPicture.jpg"
-            alt="Front visual"
-            className="w-full h-full object-cover"
-          />
+      >
+        <img
+          src="/frontPicture.jpg"
+          alt="Front visual"
+          className="w-full h-full object-cover"
+        />
 
-          <img
-            src="/logo-l.png"
-            alt="logo"
-            className="
+        <img
+          src="/logo-l.png"
+          alt="logo"
+          className="
               absolute
               top-[390px]
               left-1/2
@@ -66,21 +67,22 @@ export const AuthLayout = () => {
               h-auto
               object-contain
   "
-          />
+        />
 
-          <div
-    className="
+        <div
+          className="
       absolute
       bottom-[40px]
       right-[100px]
       text-white
       text-right
     "
-  >
-    <p className="font-medium text-l">© 2023 Verify. All Rights Reserved.</p>
-  </div>
-
+        >
+          <p className="font-medium text-l">
+            © 2023 Verify. All Rights Reserved.
+          </p>
         </div>
-      </main>
+      </div>
+    </main>
   );
 };

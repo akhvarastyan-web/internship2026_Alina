@@ -2,59 +2,54 @@ import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
+  Outlet,
 } from 'react-router-dom';
 import { GalleryPage } from './page/GalleryPage';
 import { SignUpPage } from './page/SignUpPage';
 import { SignInPage } from './page/SignInPage';
-import { AuthLayout } from './component/AuthLayout';
+import { AuthLayout } from './component/common/AuthLayout';
 import { ForgotPasswordPage } from './page/ForgotPasswordPage';
 import { ResetPasswordPage } from './page/ResetPasswordPage';
 import { PasswordSavedPage } from './page/PasswordSavedPage';
 import { ProfilePage } from './page/ProfilePage';
 import { DashboardPage } from './page/DashboardPage';
+import { CreateGalleryPage } from './page/CreateGalleryPage';
+import { ProtectedRoute } from './routes/ProtectedRoute';
+import { PublicRoute } from './routes/PublicRoute';
+import { AuthProvider } from './providers/authProvider';
 
-
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-
-  if (!token) {
-    return <Navigate to="/auth/signin" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-
-  if (token) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <>{children}</>;
-};
 
 const router = createBrowserRouter([
   {
-    path: '/',
     element: (
-      <ProtectedRoute>
-        <DashboardPage />
-      </ProtectedRoute>
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
     ),
     children: [
       {
-        path: 'galleries',
-        element: <GalleryPage />,
+        path: '/',
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: 'galleries',
+            element: <GalleryPage />,
+          },
+          {
+            path: 'create-gallery',
+            element: <CreateGalleryPage />,
+          },
+          {
+            path: 'profile-settings',
+            element: <ProfilePage />,
+          },
+        ],
       },
       {
-        path: 'profile-settings',
-        element: <ProfilePage />,
-      },
-    ],
-  },
-  {
     path: '/auth',
     element: (
       <PublicRoute>
@@ -84,12 +79,13 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: '*',
-    element: <Navigate to="/" replace />,
+      {
+        path: '*',
+        element: <Navigate to="/" replace />,
+      },
+    ],
   },
 ]);
 
-export const App = () => {
-  return <RouterProvider router={router} />;
-};
+export const App = () => <RouterProvider router={router} />;
+

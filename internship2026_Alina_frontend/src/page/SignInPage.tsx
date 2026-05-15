@@ -1,5 +1,4 @@
-import { SignInForm } from '../component/SignInForm';
-
+import { SignInForm } from '../component/auth/SignInForm';
 
 export const SignInPage = () => {
   return <SignInForm />;

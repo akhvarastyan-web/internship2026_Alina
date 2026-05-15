@@ -2,7 +2,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { InputFieldProps } from '../../type/InputFieldProps';
 
-
 export const InputField: React.FC<InputFieldProps> = ({
   id,
   name,
@@ -21,10 +20,10 @@ export const InputField: React.FC<InputFieldProps> = ({
       <label htmlFor={id}>
         {label}
         <span className="text-error">*</span>
-        </label>
+      </label>
       <div className="relative">
-      <input
-        id={id}
+        <input
+          id={id}
           name={name || id}
           type={inputType}
           value={value}
@@ -39,13 +38,13 @@ export const InputField: React.FC<InputFieldProps> = ({
           transition
           ${
             error
-            ? 'border-error ring-1 ring-error'
-            : 'border-input focus:border-accent'
+              ? 'border-error ring-1 ring-error'
+              : 'border-input focus:border-accent'
           }
         `}
-      />
+        />
 
-      {type === 'password' && (
+        {type === 'password' && (
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -58,11 +57,9 @@ export const InputField: React.FC<InputFieldProps> = ({
             )}
           </button>
         )}
-       </div>
-
-      {error && (
-        <p className="text-error text-s text-center">{error}</p>
-      )}
       </div>
+
+      {error && <p className="text-error text-s text-center">{error}</p>}
+    </div>
   );
 };

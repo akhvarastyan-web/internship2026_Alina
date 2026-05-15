@@ -38,51 +38,48 @@ export const useAuthMutations = () => {
   });
 
   const registerMutation = useMutation({
-  mutationFn: async ({
-    registerData,
-    keepLoggedIn,
-  }: RegisterMutationParams) => {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/auth/register`,
-      {
+    mutationFn: async ({
+      registerData,
+      keepLoggedIn,
+    }: RegisterMutationParams) => {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(registerData),
-      }
-    );
+      });
 
-    let data: AuthResponse;
+      let data: AuthResponse;
 
-    try {
+      try {
         data = await res.json();
-    } catch {
-      throw new Error('Invalid server response');
-    }
+      } catch {
+        throw new Error('Invalid server response');
+      }
 
-    if (!res.ok) {
-      throw new Error(data.message || 'Registration failed');
-    }
+      if (!res.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
 
-    return {
-      data,
-      keepLoggedIn,
-    };
-  },
+      return {
+        data,
+        keepLoggedIn,
+      };
+    },
 
-  onSuccess: ({ data, keepLoggedIn }) => {
-    const token = data.access_token;
+    onSuccess: ({ data, keepLoggedIn }) => {
+      const token = data.access_token;
 
-    if (keepLoggedIn) {
-      localStorage.setItem('token', token);
-    } else {
-      sessionStorage.setItem('token', token);
-    }
+      if (keepLoggedIn) {
+        localStorage.setItem('token', token);
+      } else {
+        sessionStorage.setItem('token', token);
+      }
 
-    navigate('/');
-  },
-});
+      navigate('/');
+    },
+  });
 
   const loginMutation = useMutation({
     mutationFn: async ({ loginData, keepLoggedIn }: LoginMutationParams) => {
@@ -125,13 +122,16 @@ export const useAuthMutations = () => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async ({ password, token }: ResetPasswordData) => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/reset-password`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password, token }),
-      });
+        },
+      );
 
-     let data: { message?: string } | null = null;
+      let data: { message?: string } | null = null;
 
       try {
         data = await res.json();
@@ -140,9 +140,7 @@ export const useAuthMutations = () => {
       }
 
       if (!res.ok) {
-        throw new Error(
-          data?.message || 'Link expired or invalid token'
-        );
+        throw new Error(data?.message || 'Link expired or invalid token');
       }
 
       return true;
@@ -183,13 +181,14 @@ export const useAuthMutations = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
+
         throw new Error(errorData.message || 'Failed to change password');
       }
 
       return response.json();
     },
     onSuccess: () => {
-      onSuccess();;
+      onSuccess();
     },
     onError: (error: Error) => {
       alert(error.message);

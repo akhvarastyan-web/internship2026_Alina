@@ -4,7 +4,11 @@ interface FormWrapperProps {
   className?: string;
 }
 
-export const FormWrapper = ({ children, onSubmit, className = "" }: FormWrapperProps) => {
+export const FormWrapper = ({
+  children,
+  onSubmit,
+  className = '',
+}: FormWrapperProps) => {
   return (
     <form
       onSubmit={onSubmit}
