@@ -2,30 +2,30 @@ import { useState } from 'react';
 import { InputField } from '../common/InputField';
 import { FormErrors } from '../../type/FormErrors';
 import { handleChange } from '../../utils/handleChange';
+import { useNavigate } from 'react-router-dom';
 import { validateResetPassword } from '../../utils/validations/passwordValidation';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '../common/Button';
-import { useAuthMutations } from '../../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../../hooks/useFormFilled';
 import { FormWrapper } from '../common/FormWrapper';
 import { PasswordChecklist } from '../common/PasswordChecklist';
 import { LargeHeader } from '../common/Headers';
+import { useResetPasswordMutation } from '../../store/api/authApi';
 
 export const ResetPasswordForm = () => {
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const token = searchParams.get('token') || '';
   const [error, setError] = useState<FormErrors>({});
   const [values, setValues] = useState({
     password: '',
     confirmPassword: '',
   });
-  const {
-    resetPasswordMutation: { mutate, isPending },
-  } = useAuthMutations();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const navigate = useNavigate();
 
   const isFormFilled = useFormFilled(values);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validationErrors = validateResetPassword(values);
@@ -38,16 +38,15 @@ export const ResetPasswordForm = () => {
 
     setError({});
 
-    mutate(
-      { password: values.password, token },
-      {
-        onError: err => {
-          if (err instanceof Error) {
-            setError({ api: err.message });
-          }
-        },
-      },
-    );
+    try {
+      await resetPassword({ password: values.password, token }).unwrap();
+      navigate('/auth/password-saved');
+    } catch (err: any) {
+      const apiErrorMessage =
+        err?.data?.message || err?.message || 'Something went wrong';
+
+      setError({ api: apiErrorMessage });
+    }
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,8 +87,8 @@ export const ResetPasswordForm = () => {
 
         <Button
           text="Save"
-          isLoading={isPending}
-          disabled={!isFormFilled || isPending}
+          isLoading={isLoading}
+          disabled={!isFormFilled || isLoading}
         />
       </div>
     </FormWrapper>

@@ -13,6 +13,7 @@ import { ResetPasswordPage } from './page/ResetPasswordPage';
 import { PasswordSavedPage } from './page/PasswordSavedPage';
 import { ProfilePage } from './page/ProfilePage';
 import { DashboardPage } from './page/DashboardPage';
+import { CreateGalleryPage } from './page/CreateGalleryPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 import { AuthProvider } from './providers/authProvider';
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
           {
             path: 'galleries',
             element: <GalleryPage />,
+          },
+          {
+            path: 'create-gallery',
+            element: <CreateGalleryPage />,
           },
           {
             path: 'profile-settings',

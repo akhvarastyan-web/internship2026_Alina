@@ -10,7 +10,6 @@ import { logout, setCredentials } from '../slices/auth/auth.slice';
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
 
-  credentials: 'include',
 
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;

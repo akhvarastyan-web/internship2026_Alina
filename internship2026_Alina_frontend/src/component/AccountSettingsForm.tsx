@@ -9,6 +9,7 @@ import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { validate } from '../utils/validations/validation';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { Header } from './common/Headers';
+import { useChangeNameMutation } from '../store/api/authApi';
 
 interface ChangePasswordFormProps {
   onSuccess: () => void;
@@ -21,9 +22,7 @@ export const AccountSettingsForm = ({ onSuccess }: ChangePasswordFormProps) => {
     lastname: '',
   });
 
-  const {
-    changeNameMutation: { mutate, isPending },
-  } = useAuthMutations();
+  const [changeName, { isLoading }] = useChangeNameMutation();
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e, setValues, setError, error);
@@ -31,25 +30,26 @@ export const AccountSettingsForm = ({ onSuccess }: ChangePasswordFormProps) => {
 
   const isFormFilled = useFormFilled(values);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validationErrors = validate(values);
 
     if (Object.keys(validationErrors).length > 0) {
       setError(validationErrors);
-
       return;
     }
 
-    mutate(values, {
-      onSuccess: () => {
-        onSuccess();
-      },
-      onError: error => {
-        console.error('Submission failed:', error);
-      },
-    });
+    try {
+      await changeName(values).unwrap();
+
+      onSuccess();
+
+    } catch (err: any) {
+
+      const apiErrorMessage = err?.data?.message || err?.message || 'Something went wrong';
+      setError({ api: apiErrorMessage });
+    }
   };
 
   return (
@@ -93,8 +93,8 @@ export const AccountSettingsForm = ({ onSuccess }: ChangePasswordFormProps) => {
 
         <Button
           text="Save changes"
-          isLoading={isPending}
-          disabled={!isFormFilled || isPending}
+          isLoading={isLoading}
+          disabled={!isFormFilled || isLoading}
         />
       </div>
     </FormWrapper>

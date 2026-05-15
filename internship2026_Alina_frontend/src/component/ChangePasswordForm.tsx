@@ -5,11 +5,11 @@ import { useState } from 'react';
 import { FormErrors } from '../type/FormErrors';
 import { PasswordFormValues } from '../type/FormValues';
 import { InputField } from './common/InputField';
-import { useAuthMutations } from '../utils/mutations/useAuthMutations';
 import { validate } from '../utils/validations/validation';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { PasswordChecklist } from './common/PasswordChecklist';
 import { Header } from './common/Headers';
+import { useChangePasswordMutation } from '../store/api/authApi';
 
 interface ChangePasswordFormProps {
   onSuccess: () => void;
@@ -23,9 +23,7 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
     confirmPassword: '',
   });
 
-  const {
-    changePasswordMutation: { mutate, isPending },
-  } = useAuthMutations();
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e, setValues, setError, error);
@@ -33,7 +31,7 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
 
   const isFormFilled = useFormFilled(values);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError({});
 
@@ -52,25 +50,23 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
 
     if (Object.keys(allErrors).length > 0) {
       setError(allErrors);
-
       return;
     }
 
-    mutate(
-      {
+    try {
+      await changePassword({
         oldPassword: values.oldPassword,
         newPassword: values.newPassword,
-      },
-      {
-        onSuccess: () => {
-          onSuccess();
-          setValues({ oldPassword: '', newPassword: '', confirmPassword: '' });
-        },
-        onError: (err: any) => {
-          setError({ oldPassword: err.message || 'Something went wrong' });
-        },
-      },
-    );
+      }).unwrap();
+
+      onSuccess();
+      setValues({ oldPassword: '', newPassword: '', confirmPassword: '' });
+
+    } catch (err: any) {
+      const apiErrorMessage = err?.data?.message || err?.message || 'Something went wrong';
+
+      setError({ oldPassword: apiErrorMessage });
+    }
   };
 
   return (
@@ -131,8 +127,8 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
 
         <Button
           text="Save changes"
-          isLoading={isPending}
-          disabled={!isFormFilled || isPending}
+          isLoading={isLoading}
+          disabled={!isFormFilled || isLoading}
         />
       </div>
     </FormWrapper>

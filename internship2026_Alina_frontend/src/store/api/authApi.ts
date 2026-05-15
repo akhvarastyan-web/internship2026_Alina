@@ -24,7 +24,7 @@ export const authApi = createApi({
       providesTags: ['User'],
     }),
 
-    login: builder.mutation<{ accessToken: string }, LoginRequest>({
+    login: builder.mutation<{ access_token: string }, LoginRequest>({
       query: credentials => ({
         url: '/auth/login',
         method: 'POST',
@@ -32,7 +32,7 @@ export const authApi = createApi({
       }),
     }),
 
-    register: builder.mutation<{ accessToken: string }, RegisterRequest>({
+    register: builder.mutation<{ access_token: string }, RegisterRequest>({
       query: body => ({
         url: '/auth/register',
         method: 'POST',

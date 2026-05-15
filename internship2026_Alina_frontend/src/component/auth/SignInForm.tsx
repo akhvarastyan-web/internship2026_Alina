@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { InputField } from '../common/InputField';
 import { FormErrors } from '../../type/FormErrors';
-import { Square, CheckSquare } from 'lucide-react';
 import { handleChange } from '../../utils/handleChange';
 import { Button } from '../common/Button';
-import { useAuthMutations } from '../../utils/mutations/useAuthMutations';
 import { useFormFilled } from '../../hooks/useFormFilled';
 import { FormWrapper } from '../common/FormWrapper';
 import { LargeHeader } from '../common/Headers';
+import { useLoginMutation } from '../../store/api/authApi';
+import { setCredentials } from '../../store/slices/auth/auth.slice';
+import { useAppDispatch } from '../../hooks/redux';
 
 export const SignInForm = () => {
   const [error, setError] = useState<FormErrors>({});
@@ -16,36 +17,30 @@ export const SignInForm = () => {
     email: '',
     password: '',
   });
-  const {
-    loginMutation: { mutate, isPending },
-  } = useAuthMutations();
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useAppDispatch();
 
   const isFormFilled = useFormFilled(values);
 
-  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
-
-  const toggleKeepLoggedIn = () => {
-    setKeepLoggedIn(prev => !prev);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError({});
 
-    mutate(
-      {
-        loginData: { email: values.email, password: values.password },
-        keepLoggedIn,
-      },
-      {
-        onError: err => {
-          if (err instanceof Error) {
-            setError({ api: err.message });
-          }
-        },
-      },
-    );
-  };
+    try {
+      const result = await login({
+        email: values.email,
+        password: values.password,
+      }).unwrap();
+
+
+
+      dispatch(setCredentials({ accessToken: result.access_token }));
+
+  } catch (err: any) {
+    const errorMessage = err.data?.message || err.message || 'Login failed';
+      setError({ api: errorMessage });
+  }
+};
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e, setValues, setError, error);
@@ -97,29 +92,7 @@ export const SignInForm = () => {
           className="
         flex justify-between items-center"
         >
-          <div
-            role="checkbox"
-            aria-checked={keepLoggedIn}
-            tabIndex={0}
-            onClick={toggleKeepLoggedIn}
-            className="flex items-center gap-2 cursor-pointer select-none
-            focus-visible:ring-2 focus-visible:ring-accent
-            rounded-sm outline-none"
-            onKeyDown={event => {
-              if (event.key === ' ' || event.key === 'Enter') {
-                event.preventDefault();
-                toggleKeepLoggedIn();
-              }
-            }}
-          >
-            {keepLoggedIn ? (
-              <CheckSquare className="check-box-icon text-accent" />
-            ) : (
-              <Square className="check-box-icon text-text-secondary" />
-            )}
 
-            <p className="text-s text-text-secondary">Keep me logged in</p>
-          </div>
           <div>
             <p className="text-s text-text-secondary">
               <Link
@@ -134,8 +107,8 @@ export const SignInForm = () => {
 
         <Button
           text="Sign in"
-          isLoading={isPending}
-          disabled={!isFormFilled || isPending}
+          isLoading={isLoading}
+          disabled={!isFormFilled || isLoading}
         />
 
         <p className="text-s text-center text-text-secondary">

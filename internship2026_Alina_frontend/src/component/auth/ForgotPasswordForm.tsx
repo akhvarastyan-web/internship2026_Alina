@@ -8,6 +8,7 @@ import { Button } from '../common/Button';
 import { useFormFilled } from '../../hooks/useFormFilled';
 import { FormWrapper } from '../common/FormWrapper';
 import { LargeHeader } from '../common/Headers';
+import { useForgotPasswordMutation } from '../../store/api/authApi';
 
 export const ForgotPasswordForm = () => {
   const navigate = useNavigate();
@@ -17,10 +18,8 @@ export const ForgotPasswordForm = () => {
     email: '',
   });
 
-
-  const [forgotPassword, { isLoading, isSuccess }] = useForgotPasswordMutation();
-
-
+  const [forgotPassword, { isLoading, isSuccess }] =
+    useForgotPasswordMutation();
 
   const isFormFilled = useFormFilled(values);
 

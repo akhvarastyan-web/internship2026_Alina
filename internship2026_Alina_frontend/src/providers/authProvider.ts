@@ -18,6 +18,7 @@ export const AuthProvider = ({
     skip: !token,
   });
 
+
   useEffect(() => {
     if (!token) {
       dispatch(setInitialized());
@@ -35,9 +36,6 @@ export const AuthProvider = ({
     }
   }, [token, data, isSuccess, isError, dispatch]);
 
-  if (isLoading) {
-    return
-  }
 
   return children;
 };

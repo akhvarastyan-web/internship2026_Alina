@@ -7,7 +7,7 @@ export const ProfileSettings = () => {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const user = useAppSelector(state => state.auth.user);
 
-  const fullName = `${user?.firstName ?? 'User'} ${user?.lastName ?? 'User'}`;
+  const fullName = `${user?.firstname ?? 'User'} ${user?.lastname ?? 'User'}`;
 
   const handleSuccess = () => {
     setIsSuccessModalOpen(true);
@@ -54,9 +54,9 @@ export const ProfileSettings = () => {
 
       <div
         className="w-full max-w-[1020px] flex flex-col items-center gap-10
-      min-[1300px]:flex-row
-      min-[1300px]:items-start
-      min-[1300px]:gap-5"
+      lg:flex-row
+      lg:items-start
+      lg:gap-5"
       >
         <div className="flex-1 w-full">
           <AccountSettingsForm onSuccess={handleSuccess} />

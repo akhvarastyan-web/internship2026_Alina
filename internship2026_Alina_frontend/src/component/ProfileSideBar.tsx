@@ -2,10 +2,15 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLogOut } from '../utils/LogOutFunction';
+import { useAppSelector } from '../hooks/redux';
 
 export const ProfileSideBar = ({ onClose }: { onClose?: () => void }) => {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const { logout } = useLogOut();
+
+  const user = useAppSelector(state => state.auth.user);
+
+  const fullName = `${user?.firstname ?? 'User'} ${user?.lastname ?? 'User'}`;
 
   const handleLinkClick = () => {
     if (window.innerWidth < 1024 && onClose) {
@@ -73,10 +78,10 @@ export const ProfileSideBar = ({ onClose }: { onClose?: () => void }) => {
           <div className="flex flex-col">
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-medium truncate color-text-main">
-                FirstName LastName
+                {fullName}
               </span>
               <span className="text-xs truncate color-text-secondary">
-                user@email.com
+                {user?.email ?? 'No email'}
               </span>
             </div>
           </div>
