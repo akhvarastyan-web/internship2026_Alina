@@ -10,10 +10,10 @@ export const userApi = createApi({
       query: file => {
         const formData = new FormData();
 
-        formData.append('file', file);
+        formData.append('avatar', file);
 
         return {
-          url: '/users/profile/avatar',
+          url: '/user/upload-avatar',
           method: 'POST',
           body: formData,
         };
@@ -26,10 +26,10 @@ export const userApi = createApi({
       query: file => {
         const formData = new FormData();
 
-        formData.append('file', file);
+        formData.append('background', file);
 
         return {
-          url: '/users/profile/background',
+          url: '/user/upload-background',
           method: 'POST',
           body: formData,
         };
@@ -38,7 +38,7 @@ export const userApi = createApi({
     }),
 
     getProfile: builder.query<any, void>({
-      query: () => '/users/profile',
+      query: () => '/user/profile',
       providesTags: ['UserProfile'],
     }),
   }),

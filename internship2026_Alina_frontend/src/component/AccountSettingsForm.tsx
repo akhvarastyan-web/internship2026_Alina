@@ -5,8 +5,7 @@ import { useState } from 'react';
 import { FormErrors } from '../type/FormErrors';
 import { FormValues } from '../type/FormValues';
 import { InputField } from './common/InputField';
-import { useAuthMutations } from '../utils/mutations/useAuthMutations';
-import { validate } from '../utils/validations/validation';
+import { validateName } from '../utils/validations/nameValidation';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { Header } from './common/Headers';
 import { useChangeNameMutation } from '../store/api/authApi';
@@ -31,26 +30,26 @@ export const AccountSettingsForm = ({ onSuccess }: ChangePasswordFormProps) => {
   const isFormFilled = useFormFilled(values);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const validationErrors = validate(values);
+  const validationErrors = validateName(values);
 
-    if (Object.keys(validationErrors).length > 0) {
-      setError(validationErrors);
-      return;
-    }
+  if (Object.keys(validationErrors).length > 0) {
+    setError(validationErrors);
+    return;
+  }
 
-    try {
-      await changeName(values).unwrap();
+  console.log('sending values:', values);
 
-      onSuccess();
+  try {
+    const result = await changeName(values).unwrap();
 
-    } catch (err: any) {
-
-      const apiErrorMessage = err?.data?.message || err?.message || 'Something went wrong';
-      setError({ api: apiErrorMessage });
-    }
-  };
+    onSuccess();
+  } catch (err: any) {
+    const apiErrorMessage = err?.data?.message || err?.message || 'Something went wrong';
+    setError({ api: apiErrorMessage });
+  }
+};
 
   return (
     <FormWrapper onSubmit={handleSubmit} className="gap-form-large">
@@ -92,6 +91,7 @@ export const AccountSettingsForm = ({ onSuccess }: ChangePasswordFormProps) => {
         />
 
         <Button
+          type="submit"
           text="Save changes"
           isLoading={isLoading}
           disabled={!isFormFilled || isLoading}

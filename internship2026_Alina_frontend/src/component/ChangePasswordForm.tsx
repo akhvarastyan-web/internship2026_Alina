@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { FormErrors } from '../type/FormErrors';
 import { PasswordFormValues } from '../type/FormValues';
 import { InputField } from './common/InputField';
-import { validate } from '../utils/validations/validation';
+import { validateChangePassword } from '../utils/validations/changePasswordValidation';
 import { useFormFilled } from '../hooks/useFormFilled';
 import { PasswordChecklist } from './common/PasswordChecklist';
 import { Header } from './common/Headers';
@@ -41,7 +41,7 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
       newErrors.oldPassword = 'Please enter your current password';
     }
 
-    const newPasswordErrors = validate({
+    const newPasswordErrors = validateChangePassword({
       newPassword: values.newPassword,
       confirmPassword: values.confirmPassword,
     } as any);
@@ -126,6 +126,7 @@ export const ChangePasswordForm = ({ onSuccess }: ChangePasswordFormProps) => {
         />
 
         <Button
+          type="submit"
           text="Save changes"
           isLoading={isLoading}
           disabled={!isFormFilled || isLoading}
