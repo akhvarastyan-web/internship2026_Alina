@@ -4,8 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { validationSchema } from './config/env.validation';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+<<<<<<< HEAD
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+=======
+>>>>>>> 6e7383bc590d8a347a80cdf6c5d5312969eef90a
 import { GalleriesModule } from './galleries/galleries.module';
 
 @Module({
@@ -28,7 +31,7 @@ import { GalleriesModule } from './galleries/galleries.module';
     UsersModule,
     GalleriesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
