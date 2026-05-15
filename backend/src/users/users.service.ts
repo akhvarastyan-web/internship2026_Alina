@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDto } from '../auth/dto/register.dto';
 import {
   Injectable,
   NotFoundException,
@@ -48,6 +48,7 @@ export class UsersService {
   async findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({ where: { id } });
   }
+  
 
   async update(id: number, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
@@ -60,7 +61,9 @@ export class UsersService {
         where: { email: dto.email },
       });
       if (emailOwner && emailOwner.id !== id) {
-        throw new ConflictException('Email is already in use by another account');
+        throw new ConflictException(
+          'Email is already in use by another account',
+        );
       }
     }
 
@@ -72,4 +75,52 @@ export class UsersService {
     Object.assign(user, dto);
     return this.usersRepository.save(user);
   }
+
+  async updateRefreshToken(
+    id: number,
+    hashedRefreshToken: string,
+  ): Promise<void> {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.hashedRefreshToken = hashedRefreshToken;
+
+    await this.usersRepository.save(user);
+  }
+
+async saveResetToken(id: number, token: string, expiry: Date): Promise<void> {
+  const user = await this.findOne(id);
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  user.resetToken = token;
+  user.resetTokenExpiry = expiry;
+
+  await this.usersRepository.save(user);
+}
+
+async findByResetToken(token: string): Promise<User | null> {
+  return this.usersRepository.findOne({
+    where: { resetToken: token },
+  });
+}
+
+  async updatePasswordAndClearToken(
+    id: number,
+    hashedPassword: string,
+  ): Promise<void> {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+
+    await this.usersRepository.save(user);
+}
 }
