@@ -19,7 +19,7 @@ export const authApi = createApi({
 
   endpoints: builder => ({
     getMe: builder.query<User, void>({
-      query: () => '/auth/profile',
+      query: () => '/user/profile',
 
       providesTags: ['User'],
     }),

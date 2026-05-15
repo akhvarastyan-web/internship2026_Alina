@@ -2,16 +2,49 @@ import { AccountSettingsForm } from './AccountSettingsForm';
 import { ChangePasswordForm } from './ChangePasswordForm';
 import { useState } from 'react';
 import { useAppSelector } from '../hooks/redux';
+import { ChangeEvent } from 'react';
+import {
+  useUpdateAvatarMutation,
+  useUpdateBackgroundMutation,
+  useGetProfileQuery
+} from './userApi';
 
 export const ProfileSettings = () => {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const user = useAppSelector(state => state.auth.user);
+
+  const [uploadAvatar, { isLoading: isAvatarUploading }] = useUpdateAvatarMutation();
+  const [uploadBackground, { isLoading: isBgUploading }] = useUpdateBackgroundMutation();
 
   const fullName = `${user?.firstname ?? 'User'} ${user?.lastname ?? 'User'}`;
 
   const handleSuccess = () => {
     setIsSuccessModalOpen(true);
   };
+
+  const handleAvatarChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    try {
+      await uploadAvatar(file).unwrap();
+      alert('Avatar updated successfully!');
+    } catch (error) {
+      alert('Failed to upload avatar');
+    }
+  }
+};
+
+const handleBackgroundChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    try {
+      await uploadBackground(file).unwrap();
+      alert('Background updated successfully!');
+    } catch (error) {
+      alert('Failed to upload background');
+    }
+  }
+};
 
   return (
     <div className="w-full p-5 flex flex-col gap-20 items-center">
