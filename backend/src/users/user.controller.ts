@@ -4,12 +4,15 @@ import { User } from '../users/user.entity';
 import { Request as ExpressRequest } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   Controller,
   Body,
@@ -17,11 +20,27 @@ import {
   UseGuards,
   Request,
   Patch,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Req,
+  Inject, 
+  forwardRef,
 } from '@nestjs/common';
 
 interface RequestWithUser extends ExpressRequest {
   user: User & { id: number };
 }
+
+const multerConfig = {
+  storage: diskStorage({
+    destination: './uploads',
+    filename: (req, file, callback) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      callback(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+    },
+  }),
+};
 
 
 @ApiTags('user')
@@ -31,6 +50,8 @@ interface RequestWithUser extends ExpressRequest {
 export class UserController {
   constructor(
     private readonly usersService: UsersService,
+
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
   ) {}
 
@@ -71,5 +92,32 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return this.usersService.update(req.user.id, updateUserDto);
+  }
+
+  @Post('upload-avatar')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('avatar', multerConfig))
+  async uploadAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
+    const userId = req.user.id;
+    const filePath = `/uploads/${file.filename}`;
+    
+    await this.usersService.updateAvatar(userId, filePath);
+    return { message: 'Avatar updated successfully', avatarUrl: filePath };
+  }
+
+  @Post('upload-background')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('background', multerConfig))
+  async uploadBackground(
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const userId = req.user.id;
+    const filePath = `/uploads/${file.filename}`;
+    await this.usersService.updateBackground(userId, filePath);
+    return {
+      message: 'Background updated successfully',
+      backgroundUrl: filePath,
+    };
   }
 }

@@ -6,7 +6,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
+import * as express from 'express';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -59,7 +59,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout user from system' })
   @ApiResponse({ status: 200, description: 'Successfully logged out' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async logout(@Request() req: any, @Res({ passthrough: true }) res: Response) {
+  async logout(
+    @Request() req: any,
+    @Res({ passthrough: true }) res: express.Response,
+  ) {
     await this.authService.logout(req.user.id);
     res.clearCookie('refreshToken');
 
@@ -70,7 +73,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refresh(
     @Request() req: any,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: express.Response,
   ) {
     const refreshToken = req.cookies['refreshToken'];
     
