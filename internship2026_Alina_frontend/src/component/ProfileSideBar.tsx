@@ -48,7 +48,8 @@ export const ProfileSideBar = ({ onClose }: { onClose?: () => void }) => {
 
           {isFolderOpen && (
             <div className="flex flex-col gap-2 mt-2 pl-4">
-              <div className="py-1">List of galleries</div>
+              <Link
+              to="/galleries">List of galleries</Link>
               <div className="py-1">Search among galleries</div>
             </div>
           )}
@@ -58,7 +59,8 @@ export const ProfileSideBar = ({ onClose }: { onClose?: () => void }) => {
           <div className="flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-2">
               <img src="/user.png" alt="Folder Icon" className="size-icon" />
-              <span>User management</span>
+              <Link
+              to="/create-gallery">Create gallery</Link>
             </div>
           </div>
         </div>

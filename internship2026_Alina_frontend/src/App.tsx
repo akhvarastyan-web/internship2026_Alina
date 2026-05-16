@@ -4,7 +4,7 @@ import {
   Navigate,
   Outlet,
 } from 'react-router-dom';
-import { GalleryPage } from './page/GalleryPage';
+import { GalleriesPage } from './page/GalleriesPage';
 import { SignUpPage } from './page/SignUpPage';
 import { SignInPage } from './page/SignInPage';
 import { AuthLayout } from './component/common/AuthLayout';
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'galleries',
-            element: <GalleryPage />,
+            element: <GalleriesPage />,
           },
           {
             path: 'create-gallery',
