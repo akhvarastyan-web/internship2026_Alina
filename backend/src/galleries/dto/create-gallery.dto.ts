@@ -11,4 +11,10 @@ export class CreateGalleryDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsOptional()
+  titles?: string[];
+
+  @IsOptional()
+  descriptions?: string[];
 }

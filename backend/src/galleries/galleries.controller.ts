@@ -29,6 +29,8 @@ import { UploadPhotoDto } from './dto/upload-photo.dto';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { multerConfig } from '../config/multer.config';
+
 
 @ApiTags('galleries')
 @ApiBearerAuth()
@@ -37,11 +39,16 @@ import { extname } from 'path';
 export class GalleriesController {
   constructor(private readonly galleriesService: GalleriesService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new gallery' })
-  create(@Body() createGalleryDto: CreateGalleryDto, @Req() req: any) {
-    return this.galleriesService.create(createGalleryDto, req.user); 
-  }
+@Post()
+ @ApiOperation({ summary: 'Create gallery' })
+@UseInterceptors(FilesInterceptor('files', 50, multerConfig))
+create(
+  @UploadedFiles() files: Express.Multer.File[],
+  @Body() createGalleryDto: CreateGalleryDto,
+  @Req() req: any
+) {
+  return this.galleriesService.create(createGalleryDto, files, req.user);
+}
 
   @Get()
   @ApiOperation({ summary: 'Get all galleries' })
@@ -70,13 +77,21 @@ export class GalleriesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update gallery by ID' })
-  update(
+  @UseInterceptors(FilesInterceptor('files', 50, multerConfig))
+  async update(
     @Param('id') id: string,
     @Body() updateGalleryDto: UpdateGalleryDto,
+    @UploadedFiles() files: Express.Multer.File[],
     @Req() req: any,
   ) {
-    return this.galleriesService.update(+id, updateGalleryDto, req.user.id);
+    return this.galleriesService.update(
+      +id, 
+      updateGalleryDto, 
+      files, 
+      req.user.id
+    );
   }
+
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete gallery by ID' })
@@ -86,34 +101,10 @@ export class GalleriesController {
 
   @Post(':id/photos')
   @ApiOperation({ summary: 'Upload photos into specific gallery' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadPhotoDto })
-  @UseInterceptors(
-    FilesInterceptor('files', 50, { 
-      storage: diskStorage({
-        destination: './uploads/galleries',
-        filename: (req, file, callback) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          callback(
-            null,
-            `gallery-${uniqueSuffix}${extname(file.originalname)}`,
-          );
-        },
-      }),
-      fileFilter: (req, file, callback) => {
-        if (!file.originalname.match(/\.(jpeg|png)$/)) {
-          return callback(
-            new BadRequestException('Only image files are allowed'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FilesInterceptor('files', 50, multerConfig))
   async uploadPhotos(
     @Param('id') id: string,
-    @Body() uploadPhotoDto: UploadPhotoDto,
+    @Body() uploadPhotoDto: { titles?: string[]; descriptions?: string[] },
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: any,
   ) {
@@ -121,18 +112,18 @@ export class GalleriesController {
       throw new BadRequestException('You must upload at least one file');
     }
 
-    const savedPhotos: Photo[] = [];
-
-    for (const file of files) {
-      const fileUrl = `/uploads/galleries/${file.filename}`;
-      const savedPhoto = await this.galleriesService.addPhoto(+id, uploadPhotoDto, fileUrl, req.user.id);
-      savedPhotos.push(savedPhoto);
-    }
+    const savedPhotos = await this.galleriesService.addPhoto(
+    +id, 
+    files, 
+    uploadPhotoDto.titles || [], 
+    uploadPhotoDto.descriptions || [], 
+    req.user.id
+   );
 
     return {
-      message: `Successfully uploaded ${files.length} photos`,
-      photos: savedPhotos,
-    };
+    message: `Successfully uploaded ${files.length} photos`,
+    photos: savedPhotos,
+   };
   }
 
   @Patch('photos/:photoId')

@@ -5,7 +5,6 @@ import { Gallery } from './entities/gallery.entity';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { Photo } from './entities/photo.entity';
-import { UploadPhotoDto } from './dto/upload-photo.dto';
 import * as fs from 'fs';
 import { join } from 'path';
 
@@ -25,13 +24,32 @@ export class GalleriesService {
     }
   }
 
-  async create(createGalleryDto: CreateGalleryDto, user: any): Promise<Gallery> {
-    const gallery = this.galleryRepository.create({
-      ...createGalleryDto,
-      user: user,
-    });
-    return await this.galleryRepository.save(gallery);
-  }
+  async create(
+  createGalleryDto: CreateGalleryDto, 
+  files: Express.Multer.File[], 
+  user: User,
+): Promise<Gallery> {
+  
+  const photoEntities = files.map((file, index) => {
+    const title = createGalleryDto.titles?.[index] || '';
+    const description = createGalleryDto.descriptions?.[index] || '';
+
+    return {
+      url: `/uploads/${file.filename}`,
+      title: title,
+      description: description,
+    };
+  });
+
+  const gallery = this.galleryRepository.create({
+    title: createGalleryDto.title,
+    description: createGalleryDto.description,
+    user: user,
+    photos: photoEntities,
+  });
+
+  return await this.galleryRepository.save(gallery);
+}
 
   async findAll(page: number = 1, limit: number = 10) {
   const take = limit;
@@ -92,18 +110,40 @@ export class GalleriesService {
     };
   }
 
-  async update(id: number, updateGalleryDto: UpdateGalleryDto, userId: number): Promise<Gallery> {
+  async update(
+    id: number, 
+    updateGalleryDto: UpdateGalleryDto, 
+    files: Express.Multer.File[],
+    userId: number
+  ): Promise<Gallery> {
     const gallery = await this.galleryRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'photos'],
     });
-    if (!gallery)
+    
+    if (!gallery) {
       throw new NotFoundException(`Gallery with ID ${id} is not found`);
+    }
 
     this.checkGalleryOwner(gallery, userId);
+
     Object.assign(gallery, updateGalleryDto);
+
+    if (files && files.length > 0) {
+      const newPhotos = files.map((file, index) => {
+        return this.photoRepository.create({
+          url: `/uploads/galleries/${file.filename}`,
+          title: updateGalleryDto.titles?.[index] || '',
+          description: updateGalleryDto.descriptions?.[index] || '',
+          gallery: gallery
+        });
+      });
+      await this.photoRepository.save(newPhotos);
+    }
+
     return await this.galleryRepository.save(gallery);
   }
+
 
   async remove(id: number, userId: number): Promise<void> {
     const gallery = await this.galleryRepository.findOne({
@@ -128,27 +168,35 @@ export class GalleriesService {
 
   async addPhoto(
     galleryId: number,
-    uploadPhotoDto: UploadPhotoDto,
-    fileUrl: string,
+    files: Express.Multer.File[],
+    titles: string[],
+    descriptions: string[],
     userId: number,
-  ): Promise<Photo> {
+  ): Promise<Photo[]> {
     const gallery = await this.galleryRepository.findOne({
       where: { id: galleryId },
       relations: ['user'],
     });
 
-    if (!gallery) throw new NotFoundException(`Gallery is not found`);
-    
+    if (!gallery) {
+      throw new NotFoundException(`Gallery with ID ${galleryId} is not found`);
+    }
+
     this.checkGalleryOwner(gallery, userId);
 
-    const photo = this.photoRepository.create({
-      title: uploadPhotoDto.title,
-      description: uploadPhotoDto.description,
-      url: fileUrl,
-      gallery: gallery,
-    });
+    const photoEntities = files.map((file, index) => {
+      const title = titles[index] || '';
+      const description = descriptions[index] || '';
+      const fileUrl = `/uploads/galleries/${file.filename}`;
 
-    return await this.photoRepository.save(photo);
+      return this.photoRepository.create({
+        title,
+        description,
+        url: fileUrl,
+        gallery: gallery,
+      });
+    });
+    return await this.photoRepository.save(photoEntities);
   }
 
   async updatePhoto(
