@@ -5,6 +5,7 @@ import { Gallery } from './entities/gallery.entity';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { Photo } from './entities/photo.entity';
+import { User } from '../users/user.entity';
 import * as fs from 'fs';
 import { join } from 'path';
 
