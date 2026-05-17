@@ -5,6 +5,7 @@ import { galleryApi } from './api/galleryApi';
 import authReducer from './slices/auth/auth.slice';
 import dashboardHeaderReducer from './slices/dashboard/dashboardHeader.slice';
 import { listenerMiddleware } from './listenerMiddleware';
+export { useFindAllGalleriesQuery } from '../store/api/galleryApi';
 
 export const store = configureStore({
   reducer: {

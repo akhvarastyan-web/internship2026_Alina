@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setHeader } from '../store/slices/dashboard/dashboardHeader.slice';
 import { ContextMenu } from './common/ContextMenu';
@@ -46,22 +46,18 @@ export const GalleryDetails = () => {
   const [removePhoto, { isLoading: isPhotoDeleting }] = useRemovePhotoMutation();
 
   useEffect(() => {
-    dispatch(
-      setHeader({
-        title: 'Gallery',
-        button: {
-          text: 'Go to upload photos',
-          link: '/search-results',
-        },
-      }),
-    );
-  }, [dispatch]);
+    if (!gallery) return;
+  const headerData = {
+    title: 'Gallery',
+    button: {
+      text: 'Go to upload photos',
+      link: `/upload-photos/${gallery.id}`,
+    },
+  };
 
-  useEffect(() => {
-    const handleGlobalClick = () => setActiveMenuId(null);
-    window.addEventListener('click', handleGlobalClick);
-    return () => window.removeEventListener('click', handleGlobalClick);
-  }, []);
+  dispatch(setHeader(headerData));
+}, [dispatch]);
+
 
   if (galleryError || photosError) {
     console.error('Error:', { galleryError, photosError });
@@ -73,7 +69,7 @@ export const GalleryDetails = () => {
   const currentEditingPhoto = photos.find((p: any) => p?.id === editPhotoTargetId);
 
 
-  const handleDeletePhotoConfirm = async () => {
+  const handleDeletePhoto = async () => {
     if (!deleteTargetId) return;
     try {
       await removePhoto(deleteTargetId).unwrap();
@@ -82,6 +78,23 @@ export const GalleryDetails = () => {
       console.error('Fail:', err);
     }
   };
+
+  const handleDeleteAllPhotos = async () => {
+  if (!photos || photos.length === 0) return;
+
+  const confirmDelete = window.confirm(`Are you sure you want to delete all ${photos.length} photos?`);
+  if (!confirmDelete) return;
+
+  try {
+    for (const photo of photos) {
+      await removePhoto(photo.id).unwrap();
+    }
+
+    setIsDeletedSuccess(true);
+  } catch (err) {
+    console.error('Failed to delete photos:', err);
+  }
+};
 
   const handleSavePhotoDetails = async (updatedData: { name: string; comment: string }) => {
     if (!editPhotoTargetId) return;
@@ -117,18 +130,18 @@ export const GalleryDetails = () => {
   };
 
   if (isLoading) {
-    return <div style={{ padding: '20px', textTransform: 'uppercase' }}>Loading photos from server...</div>;
+    return <div>Loading photos from server...</div>;
   }
 
   return (
-    <section style={{ padding: '20px', background: '#fafafa', minHeight: '100vh' }}>
+    <section className="px-[30px] bg-bg-main min-h-screen">
 
-      <div style={{ marginBottom: '20px', paddingBottom: '10px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>{gallery?.title || 'Gallery ID: ' + galleryId}</h1>
-        <p style={{ color: '#666' }}>{gallery?.description || 'No description available'}</p>
+      <div className="mb-[40px]">
+        <h1 className="text-2xl font-bold leading-[1.5]">{gallery?.title || 'Gallery ID: ' + galleryId}</h1>
+        <p className="text-text-secondary leading-[1.5]">{gallery?.description || 'No description available'}</p>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+      <div className="flex flex-wrap gap-3.5">
         {photos.map((photo: any, index: number) => {
           const photoId = photo?.id || index;
           const rawUrl = photo?.url || (typeof photo === 'string' ? photo : '');
@@ -137,8 +150,7 @@ export const GalleryDetails = () => {
           return (
             <div
               key={photoId}
-              className="group"
-              style={{ border: '1px solid #ddd', padding: '5px', background: '#fff', position: 'relative' }}
+              className="group p-1 bg-bg-main relative"
             >
               <ContextMenu
                 itemId={photoId}
@@ -146,29 +158,45 @@ export const GalleryDetails = () => {
                 setActiveMenuId={setActiveMenuId}
                 onDeleteClick={() => setDeleteTargetId(photoId)}
                 onEditClick={() => {
-                  setEditPhotoTargetId(photoId);
-                }}
+
+               setEditPhotoTargetId(photoId);
+               }}
               />
 
               <img
-                src={url}
-                alt=""
-                style={{ width: '120px', height: '120px', objectFit: 'cover', display: 'block' }}
-                onError={(e) => {
-                  console.error('Fail:', url);
-                  (e.target as any).style.display = 'block';
-                }}
-              />
-              <p style={{ fontSize: '12px', maxWidth: '120px', margin: '5px 0 0' }} className="truncate">
+  src={url}
+  alt="Gallery item"
+  className="w-[120px] h-[120px] rounded-2xl  object-cover block"
+  onError={(e) => {
+    console.error('Fail:', url);
+
+    e.currentTarget.src = '/public/images/gallery.png';
+  }}
+/>
+              <p className="max-w-[120px] mt-1.5 mb-0 truncate">
                 {photo?.title || 'No title'}
+              </p>
+              <p className="text-[10px] text-text-secondary truncate mt-0.5">
+                {photo?.description || 'No description'}
               </p>
             </div>
           );
         })}
       </div>
 
+      {photos.length > 0 && (
+        <div className="mt-5 flex justify-start">
+          <button
+            onClick={handleDeleteAllPhotos}
+            className="text-accent hover:text-accent-hover cursor-pointer text-l font-medium p-0"
+          >
+            Delete All ({photos.length} photos)
+          </button>
+        </div>
+      )}
+
       {photos.length === 0 && (
-        <div style={{ color: '#999', margin: '20px 0' }}>Gallery is empty</div>
+        <div className="text-[#999] my-5 mx-0">Gallery is empty</div>
       )}
 
        <EditPhotoModal
@@ -207,7 +235,7 @@ export const GalleryDetails = () => {
         isDeletedSuccess={isDeletedSuccess}
         title="Delete photos"
         description="Are you sure you want to delete photos from the galerry?"
-        onConfirm={handleDeletePhotoConfirm}
+        onConfirm={handleDeletePhoto}
         onClose={closeDeleteModal}
       />
     </section>

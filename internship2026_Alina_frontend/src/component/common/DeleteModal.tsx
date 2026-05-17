@@ -27,30 +27,30 @@ export const DeleteModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg p-6 shadow-xl flex flex-col justify-between items-center text-center
+        className="bg-white rounded-2xl p-4 shadow-xl flex flex-col justify-between items-center text-center
           w-[343px] h-[298px]
           lg:w-[398px] lg:h-[298px]"
         onClick={(e: MouseEvent) => e.stopPropagation()}
       >
         {!isDeletedSuccess ? (
           <>
-            <div className="flex-1 flex flex-col justify-center gap-2">
-              <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-              <p className="text-sm text-gray-500">{description}</p>
+            <div className="flex-1 flex flex-col justify-center gap-4">
+              <h3 className="text-xl">{title}</h3>
+              <p className="text-text-secondary">{description}</p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full mt-4">
+            <div className="flex flex-col gap-1 w-[250px]">
               <button
                 disabled={isDeleting}
                 onClick={onConfirm}
-                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-semibold transition-colors disabled:opacity-50"
+                className="flex-1 h-[50px] py-2.5 bg-error hover:bg-error-soft text-bg-main rounded-2xl font-bold transition-colors"
               >
                 {isDeleting ? 'Deleting...' : 'Delete'}
               </button>
               <button
                 disabled={isDeleting}
                 onClick={onClose}
-                className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-sm font-semibold transition-colors"
+                className="flex-1 h-[50px] py-2.5 bg-bg-main hover:bg-gray-200 rounded-2xl font-bold transition-colors"
               >
                 Cancel
               </button>
@@ -58,20 +58,20 @@ export const DeleteModal = ({
           </>
         ) : (
           <>
-            <div className="flex-1 flex flex-col justify-center items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl font-bold mb-2">
+            <div className="relative w-[343px] h-[298px]
+          lg:w-[398px] lg:h-[298px] flex-1 flex flex-col justify-center items-center gap-2">
+               <button
+              onClick={onClose}
+              className="absolute w-3 h-3 top-0 right-3 rounded text-l transition-colors"
+            >
+              X
+            </button>
+              <h3 className="text-l font-bold text-gray-900">Deleted!</h3>
+               <div className="w-12 h-12 rounded-full bg-accent text-bg-main flex items-center justify-center text-xl font-bold mb-2">
                 ✓
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Deleted!</h3>
-              <p className="text-sm text-gray-500">The item has been successfully removed.</p>
+              <p className="text-text-secondary">The item has been successfully removed.</p>
             </div>
-
-            <button
-              onClick={onClose}
-              className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded text-sm font-semibold transition-colors"
-            >
-              Close
-            </button>
           </>
         )}
       </div>

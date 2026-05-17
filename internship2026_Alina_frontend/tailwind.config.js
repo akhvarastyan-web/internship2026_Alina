@@ -9,6 +9,7 @@ export default {
       },
       fontSize: {
         base: ['14px', { lineHeight: '1', letterSpacing: '0', fontWeight: '500' }],
+        xs:   ['12px', { lineHeight: '24px', fontWeight: '400' }],
         s:    ['14px', { lineHeight: '24px', fontWeight: '400' }],
         l:    ['16px', { lineHeight: '24px', fontWeight: '700' }],
         xl:   ['24px', { lineHeight: '56px', fontWeight: '700' }],

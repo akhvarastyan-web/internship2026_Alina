@@ -20,7 +20,8 @@ export const GalleriesList = () => {
 
   const galleries = data?.data || [];
   const totalCount = data?.totalCount || 0;
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  const limit = 8;
+  const totalPages = data?.meta?.totalPages || data?.totalPages || Math.ceil((data?.total || galleries?.length || 0) / limit);
 
   useEffect(() => {
     const handleGlobalClick = () => setActiveMenuId(null);
@@ -47,82 +48,98 @@ export const GalleriesList = () => {
 
 
   return (
-    <section className="flex flex-col gap-10 p-4 lg:p-0 relative">
+    <section className="relative flex flex-col gap-10 p-4 lg:p-0 relative">
       <h2 className="text-xl font-bold">Galleries</h2>
 
-      <div className="grid grid-cols-1 justify-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 justify-items-center  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {galleries.map((gallery: any) => (
           <div
             key={gallery.id}
-            className="w-[235px] h-[287px] flex flex-col bg-white rounded shadow-sm border border-gray-100 overflow-hidden relative group"
+            className="w-[235px] h-[287px] flex flex-col bg-accent-soft rounded overflow-hidden relative group"
           >
             <ContextMenu
               itemId={gallery.id}
               activeMenuId={activeMenuId}
               setActiveMenuId={setActiveMenuId}
               onDeleteClick={() => setDeleteTargetId(gallery.id)}
-              onEditClick={() => navigate(`/galleries/${gallery.id}/edit`)}
+              onEditClick={() => navigate(`/update-gallery/${gallery.id}`)}
             />
 
             <Link to={`/galleries/${gallery.id}`} className="flex flex-col w-full h-full">
-              <div className="w-[235px] h-[235px] grid grid-cols-3 grid-rows-3 gap-[2px] bg-gray-100 shrink-0">
-                {Array.from({ length: 9 }).map((_, index) => {
-                  const photoObj = gallery.photos?.[index] || gallery.images?.[index];
-                  const rawUrl = photoObj?.url || (typeof photoObj === 'string' ? photoObj : null);
-                  const imgUrl = rawUrl
-                    ? (rawUrl.startsWith('http') ? rawUrl : `http://localhost:3000${rawUrl}`)
-                    : null;
+  {(() => {
+    const totalPhotos = gallery.photos?.length || 0;
 
-                  return (
-                    <div key={index} className="w-full h-full bg-gray-200 overflow-hidden">
-                      {imgUrl ? (
-                        <img src={imgUrl} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-gray-50" />
-                      )}
-                    </div>
-                  );
-                })}
+    return (
+      <>
+        <div className="w-[235px] h-[235px] grid grid-cols-3 grid-rows-3 gap-[2px] shrink-0">
+          {Array.from({ length: 9 }).map((_, index) => {
+            const photoObj = gallery.photos?.[index];
+            const rawUrl = photoObj?.url || (typeof photoObj === 'string' ? photoObj : null);
+            const imgUrl = rawUrl
+              ? (rawUrl.startsWith('http') ? rawUrl : `http://localhost:3000${rawUrl}`)
+              : null;
+
+            const isLastSquare = index === 8;
+            const hasMorePhotos = totalPhotos > 9;
+
+            return (
+              <div key={index} className="w-full h-full overflow-hidden relative">
+                {imgUrl ? (
+                isLastSquare && hasMorePhotos ? (
+               <div className="w-full h-full flex items-center justify-center text-black text-xs font-bold">
+                +more
+               </div>
+            ) : (
+    <img src={imgUrl} alt="" className="w-full h-full  object-cover" />
+  )
+) : (
+  <div className="w-full h-full" />
+)}
               </div>
+            );
+          })}
+        </div>
 
-              <div className="p-2 flex flex-col flex-1 justify-center overflow-hidden">
-  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-1 min-w-0">
-    <span className="truncate">{gallery.title}</span>
-    <span className="text-gray-400 font-normal shrink-0">
-      ({gallery.photos?.length || gallery.images?.length || 0} photos)
-    </span>
-  </h3>
+        <div className="p-2 bg-bg-main flex flex-col flex-1 justify-center overflow-hidden">
+          <h3 className="text-sm font-bold text-gray-900 flex items-center gap-1 min-w-0">
+            <span className="truncate">{gallery.title}</span>
+            <span className="text-text-secondary shrink-0">
+              ({totalPhotos} photos)
+            </span>
+          </h3>
 
-  {gallery.description && (
-    <p className="text-xs text-gray-500 truncate mt-0.5">{gallery.description}</p>
-  )}
-</div>
-            </Link>
+          {gallery.description && (
+            <p className="text-xs text-gray-500 truncate mt-0.5">{gallery.description}</p>
+          )}
+        </div>
+      </>
+    );
+  })()}
+</Link>
           </div>
         ))}
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-4">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-            className="px-4 py-2 border rounded text-sm disabled:opacity-40 hover:bg-gray-50"
-          >
-            Previous
-          </button>
-          <span className="text-sm font-medium text-gray-700">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-            className="px-4 py-2 border rounded text-sm disabled:opacity-40 hover:bg-gray-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
+  <div className="fixed bottom-0 right-0 bg-bg-main z-[100] flex justify-center items-center gap-2 mt-4 p-4">
+  {Array.from({ length: totalPages }, (_, index) => {
+    const pageNumber = index + 1;
+    return (
+      <button
+        key={pageNumber}
+        onClick={() => setPage(pageNumber)}
+        className={`px-3 py-1 border rounded text-sm transition-colors ${
+          page === pageNumber
+            ? 'bg-accent text-white border-accent font-bold'
+            : 'bg-white text-gray-700 hover:bg-gray-50'
+        }`}
+      >
+        {pageNumber}
+      </button>
+    );
+  })}
+</div>
+)}
 
       <DeleteModal
         isOpen={deleteTargetId !== null}

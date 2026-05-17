@@ -5,8 +5,8 @@ interface ConfirmationModalProps {
   title: string;
   description: string;
   confirmText: string;
-  cancelText?: string; // Якщо немає кнопки Cancel, це буде просто вікно сповіщення (Success)
-  type?: 'warning' | 'success';
+  cancelText?: string;
+  type?: 'success';
   onConfirm: () => void;
   onClose: () => void;
 }
@@ -15,10 +15,7 @@ export const ConfirmationModal = ({
   isOpen,
   title,
   description,
-  confirmText,
-  cancelText,
-  type = 'warning',
-  onConfirm,
+  type = 'success',
   onClose,
 }: ConfirmationModalProps) => {
   if (!isOpen) return null;
@@ -29,40 +26,23 @@ export const ConfirmationModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg p-6 shadow-xl flex flex-col justify-between items-center text-center
+        className="bg-bg-main rounded-2xl p-6 shadow-xl flex flex-col justify-between items-center text-center
           w-[343px] h-[260px]
           lg:w-[398px] lg:h-[260px]"
         onClick={(e: MouseEvent) => e.stopPropagation()}
       >
+
+        <h3 className="text-xl">{title}</h3>
         <div className="flex-1 flex flex-col justify-center items-center gap-2">
           {type === 'success' && (
-            <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl font-bold mb-1">
+            <div className="w-12 h-12 rounded-full bg-accent text-bg-main flex items-center justify-center text-xl mb-1">
               ✓
             </div>
           )}
-          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-500">{description}</p>
+
+          <p className="text-text-secondary">{description}</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full mt-4">
-          <button
-            onClick={onConfirm}
-            className={`flex-1 py-2.5 text-white rounded text-sm font-semibold transition-colors ${
-              type === 'warning' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-900 hover:bg-gray-800'
-            }`}
-          >
-            {confirmText}
-          </button>
-
-          {cancelText && (
-            <button
-              onClick={onClose}
-              className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-sm font-semibold transition-colors"
-            >
-              {cancelText}
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );

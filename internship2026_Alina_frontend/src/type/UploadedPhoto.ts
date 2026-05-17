@@ -1,6 +1,5 @@
-export interface PhotoItem {
+export interface UploadedPhoto {
   id: string | number;
-  file: File;
   previewUrl: string;
   title: string;
   description: string;

@@ -74,21 +74,14 @@ export const galleryApi = createApi({
       invalidatesTags: ['GalleryList', 'Gallery'],
     }),
 
-    addPhoto: builder.mutation<Photo, UploadPhotoArgs>({
-      query: ({ galleryId, title, description, file }) => {
-        const formData = new FormData();
-        formData.append('title', title);
-        if (description) formData.append('description', description);
-        formData.append('file', file);
-
-        return {
-          url: `/galleries/${galleryId}/photos`,
-          method: 'POST',
-          body: formData,
-        };
-      },
-      invalidatesTags: (result, error, { galleryId }) => [{ type: 'PhotoList', id: galleryId }],
-    }),
+    addPhoto: builder.mutation<any, { galleryId: number; data: FormData }>({
+  query: ({ galleryId, data }) => ({
+    url: `/galleries/${galleryId}/photos`,
+    method: 'POST',
+    body: data,
+  }),
+  invalidatesTags: (result, error, { galleryId }) => [{ type: 'PhotoList', id: galleryId }],
+}),
 
     updatePhoto: builder.mutation<Photo, UpdatePhotoArgs>({
       query: ({ photoId, ...body }) => ({

@@ -18,6 +18,8 @@ import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 import { AuthProvider } from './providers/authProvider';
 import { GalleryDetails } from './component/GalleryDetails';
+import { UpdateGalleryPage } from './page/UpdateGalleryPage';
+import { UploadPhotosPage } from './page/UploadePhotosPage';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +48,14 @@ const router = createBrowserRouter([
           {
             path: 'create-gallery',
             element: <CreateGalleryPage />,
+          },
+          {
+            path: 'update-gallery/:id',
+            element: <UpdateGalleryPage />,
+          },
+          {
+            path: 'upload-photos/:id',
+            element: <UploadPhotosPage />,
           },
           {
             path: 'profile-settings',

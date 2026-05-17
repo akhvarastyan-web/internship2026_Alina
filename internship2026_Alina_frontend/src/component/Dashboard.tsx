@@ -6,6 +6,7 @@ import { ProfileSideBar } from './ProfileSideBar';
 import { Header } from './common/Headers';
 import { RootState } from '../store/index';
 
+
 export const Dashboard = () => {
   const { title, buttonConfig } = useSelector(
     (state: RootState) => state.dashboardHeader,
@@ -17,7 +18,7 @@ export const Dashboard = () => {
     <div className="flex min-h-screen">
       <aside
         className={`
-        fixed z-50 profile-sidebar-w bg-bg-main rounded-2xl shadow-lg
+        fixed z-50 profile-sidebar-w bg-bg-soft rounded-2xl shadow-lg
         transition-transform duration-300 lg:relative lg:translate-x-0
         top-0 bottom-0 m-4 lg:m-[30px]
          shrink-0
