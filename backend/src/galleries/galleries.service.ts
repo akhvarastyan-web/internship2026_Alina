@@ -52,14 +52,14 @@ export class GalleriesService {
   return await this.galleryRepository.save(gallery);
 }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(page: number = 1, limit: number = 21) {
   const take = limit;
   const skip = (page - 1) * limit;
 
   const [items, total] = await this.galleryRepository.findAndCount({
     take: take,
     skip: skip,
-    relations: ['user'],
+    relations: ['user', 'photos'],
     order: { createdAt: 'DESC' },
   });
 
@@ -86,7 +86,7 @@ export class GalleriesService {
     return gallery;
   }
 
-  async findPhotosByGallery(galleryId: number, page: number = 1, limit: number = 20) {
+  async findPhotosByGallery(galleryId: number, page: number = 1, limit: number = 21) {
     await this.findOne(galleryId);
 
     const take = limit;

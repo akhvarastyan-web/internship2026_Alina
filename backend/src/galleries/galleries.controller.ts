@@ -54,7 +54,7 @@ create(
   @ApiOperation({ summary: 'Get all galleries' })
   async findAll(
   @Query('page') page: number = 1, 
-  @Query('limit') limit: number = 10
+  @Query('limit') limit: number = 21
 ) {
   return await this.galleriesService.findAll(+page, +limit);
 }
@@ -70,7 +70,7 @@ create(
   async getGalleryPhotos(
     @Param('id') id: string,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20,
+    @Query('limit') limit: number = 21,
   ) {
     return await this.galleriesService.findPhotosByGallery(+id, +page, +limit);
   }
