@@ -17,7 +17,7 @@ import { CreateGalleryPage } from './page/CreateGalleryPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 import { AuthProvider } from './providers/authProvider';
-
+import { GalleryDetails } from './component/GalleryDetails';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +38,10 @@ const router = createBrowserRouter([
           {
             path: 'galleries',
             element: <GalleriesPage />,
+          },
+          {
+            path: '/galleries/:id',
+            element: <GalleryDetails />,
           },
           {
             path: 'create-gallery',

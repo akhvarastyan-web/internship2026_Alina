@@ -3,11 +3,13 @@ import { authApi } from './api/authApi';
 import { userApi } from './api/userApi';
 import { galleryApi } from './api/galleryApi';
 import authReducer from './slices/auth/auth.slice';
+import dashboardHeaderReducer from './slices/dashboard/dashboardHeader.slice';
 import { listenerMiddleware } from './listenerMiddleware';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    dashboardHeader: dashboardHeaderReducer,
 
     [authApi.reducerPath]: authApi.reducer,
     [userApi.reducerPath]: userApi.reducer,

@@ -60,11 +60,7 @@ export const CreateGallery = () => {
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  console.log('--- СТАРТ САБМІТУ ГАЛЕРЕЇ ---');
-  console.log('Загальний стан масиву photos перед збором:', photos);
-
   if (!galleryTitle.trim()) {
-    console.error('Помилка валідації: Назва галереї порожня.');
     return;
   }
 
@@ -73,52 +69,23 @@ export const CreateGallery = () => {
     formData.append('title', galleryTitle);
     formData.append('description', galleryDescription);
 
-    console.log('Записано в FormData: title =', galleryTitle, ', description =', galleryDescription);
-
     photos.forEach((photo, index) => {
-      console.log(`Додавання фото [${index}]:`, {
-        name: photo.file.name,
-        size: photo.file.size,
-        title: photo.title,
-        description: photo.description
-      });
-
       if (photo.file instanceof File) {
         formData.append('files', photo.file);
-      } else {
-        console.error(`Критична помилка: Елемент під індексом ${index} не є файлом типу File!`, photo.file);
       }
 
       formData.append(`titles[${index}]`, photo.title);
       formData.append(`descriptions[${index}]`, photo.description);
     });
 
-    console.log('--- Фінальний вміст FormData (ключ / значення) ---');
-    for (let pair of (formData as any).entries()) {
-      console.log(pair[0] + ': ', pair[1]);
-    }
+    await createGallery(formData).unwrap();
 
-    console.log('Надсилання запиту через RTK Query мутацію...');
-    const result = await createGallery(formData).unwrap();
-
-    console.log('УСПІХ! Відповідь сервера:', result);
     showToast('Gallery created successfully!', 'success');
     handleClearGallery();
 
   } catch (error: any) {
-    console.error('--- ПОМИЛКА ЗАПИТУ ---');
-    console.error('Повний об\'єкт помилки:', error);
-
-    if (error?.status) {
-      console.error(`HTTP Статус код від сервера: ${error.status}`);
-    }
-    if (error?.data) {
-      console.error('Повідомлення про помилку від бекенда:', error.data);
-    }
-
     showToast('Failed to create gallery', 'error');
   }
-  console.log('--- КІНЕЦЬ САБМІТУ ГАЛЕРЕЇ ---');
 };
 
   return (
