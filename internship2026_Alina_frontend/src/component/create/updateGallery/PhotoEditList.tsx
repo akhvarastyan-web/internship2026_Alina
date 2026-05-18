@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import { GalleryFormFields } from './GalleryFormFields';
 import { UploadedPhoto } from '../../../type/UploadedPhoto';
+import { GalleryErrors } from '../../../utils/validations/validateGallery';
 
 interface PhotoEditListProps {
   photos: UploadedPhoto[];
@@ -11,6 +12,7 @@ interface PhotoEditListProps {
   ) => void;
   onDeletePhoto?: (id: string | number) => void;
   isDeleteDisabled?: boolean;
+  errors?: GalleryErrors;
 }
 
 export const PhotoEditList: React.FC<PhotoEditListProps> = ({
@@ -18,6 +20,7 @@ export const PhotoEditList: React.FC<PhotoEditListProps> = ({
   handleInputChange,
   onDeletePhoto,
   isDeleteDisabled = false,
+  errors,
 }) => {
   return (
     <div className="flex-1 flex flex-col gap-5 overflow-y-auto">
@@ -52,6 +55,7 @@ export const PhotoEditList: React.FC<PhotoEditListProps> = ({
               descriptionLabel="Comment"
               descriptionPlaceholder="Type here..."
               isDescriptionOptional={false}
+              errors={errors?.photos?.[photo.id]}
             />
           </div>
         </div>

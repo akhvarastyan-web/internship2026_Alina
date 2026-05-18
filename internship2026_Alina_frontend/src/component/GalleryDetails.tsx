@@ -137,8 +137,8 @@ export const GalleryDetails = () => {
     <section className="px-[30px] bg-bg-main min-h-screen">
 
       <div className="mb-[40px]">
-        <h1 className="text-2xl font-bold leading-[1.5]">{gallery?.title || 'Gallery ID: ' + galleryId}</h1>
-        <p className="text-text-secondary leading-[1.5]">{gallery?.description || 'No description available'}</p>
+        <h1 className="text-2xl font-bold leading-[1.5] max-w-[311px] lg:max-w-[965px]">{gallery?.title || 'Gallery ID: ' + galleryId}</h1>
+        <p className="text-text-secondary leading-[1.5] max-w-[311px] lg:max-w-[965px]">{gallery?.description || 'No description available'}</p>
       </div>
 
       <div className="flex flex-wrap gap-3.5">
@@ -176,7 +176,7 @@ export const GalleryDetails = () => {
               <p className="max-w-[120px] mt-1.5 mb-0 truncate">
                 {photo?.title || 'No title'}
               </p>
-              <p className="text-[10px] text-text-secondary truncate mt-0.5">
+              <p className="text-[10px] max-w-[120px] text-text-secondary truncate mt-0.5">
                 {photo?.description || 'No description'}
               </p>
             </div>

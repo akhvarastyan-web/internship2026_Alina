@@ -78,7 +78,7 @@ export const UpdateGallery = () => {
       setIsDeletedSuccess(true);
 
       setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo.id !== deleteTargetId));
-      
+
       closeDeleteModal();
     } catch (err) {
       console.error('Fail:', err);
@@ -110,47 +110,29 @@ export const UpdateGallery = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+   const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!galleryTitle.trim()) {
-      console.warn('Логування: Сабміт скасовано, відсутній тайтл галереї');
-      return;
-    }
+  try {
+    await updateGallery({
+      id: galleryId,
+      body: {
+        title: galleryTitle,
+        description: galleryDescription,
+        photos: photos.map(photo => ({
+          id: photo.id,
+          title: photo.title || '',
+          description: photo.description || '',
+        })),
+      },
+    }).unwrap();
 
-    try {
-      const formData = new FormData();
-      formData.append('title', galleryTitle);
-      formData.append('description', galleryDescription);
+    showToast('Gallery is updated', 'success');
+  } catch (error: any) {
+    showToast('Error. Try again', 'error');
+  }
+};
 
-      photos.forEach((photo, index) => {
-        if (photo.file) {
-          formData.append('files', photo.file);
-        }
-        formData.append(`titles[${index}]`, photo.title);
-        formData.append(`descriptions[${index}]`, photo.description);
-        if (typeof photo.id === 'number') {
-          formData.append(`photoIds[${index}]`, String(photo.id));
-        }
-      });
-
-      for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(`${key}: File -> name: ${value.name}, size: ${value.size}B`);
-        } else {
-          console.log(`${key}:`, value);
-        }
-      }
-
-      const response = await updateGallery({ id: galleryId, body: formData as any }).unwrap();
-      console.log('УСПІХ! Відповідь сервера:', response);
-
-      showToast('Gallery updated successfully!', 'success');
-    } catch (error: any) {
-      console.error('Fail:', error);
-      showToast('Failed to update gallery', 'error');
-    }
-  };
 
   if (isGalleryLoading || isPhotosLoading) {
     return <div className="p-5 uppercase">Loading gallery data...</div>;
