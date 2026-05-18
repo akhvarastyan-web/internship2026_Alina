@@ -81,12 +81,12 @@ const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
           className="
             relative
             w-[90px] h-[90px]
-            rounded-full border-4 border-white bg-accent-soft
+            rounded-full border-2 border-white bg-accent-soft
             overflow-hidden
             -mt-[45px]
           "
         >
-          <div className="w-full h-full rounded-full border-4 border-white bg-accent-soft overflow-hidden">
+          <div className="w-full h-full rounded-full border-2 border-white bg-accent-soft overflow-hidden">
     <img
      src={profile?.avatarUrl ? `http://localhost:3000${profile.avatarUrl}` : '/path-to-avatar.jpg'}
       alt="Avatar"

@@ -26,6 +26,7 @@ export const GalleryDetails = () => {
 
    const [updatePhoto, { isLoading: isPhotoUpdating }] = useUpdatePhotoMutation();
 
+
   const [page, setPage] = useState(1);
   const itemsPerPage = 28;
 
@@ -38,6 +39,7 @@ export const GalleryDetails = () => {
     data: photosData,
     isLoading,
     error: photosError,
+    refetch,
   } = useFindPhotosByGalleryQuery(
     { galleryId, page, limit: itemsPerPage },
     { skip: !galleryId },
@@ -69,6 +71,7 @@ export const GalleryDetails = () => {
   const currentEditingPhoto = photos.find((p: any) => p?.id === editPhotoTargetId);
 
 
+
   const handleDeletePhoto = async () => {
     if (!deleteTargetId) return;
     try {
@@ -97,19 +100,25 @@ export const GalleryDetails = () => {
 };
 
   const handleSavePhotoDetails = async (updatedData: { name: string; comment: string }) => {
-    if (!editPhotoTargetId) return;
-    try {
-      await updatePhoto({
-        photoId: editPhotoTargetId,
+  if (!editPhotoTargetId) return;
+
+  try {
+    await updatePhoto({
+      photoId: editPhotoTargetId,
+      body: {
         title: updatedData.name,
-        description: updatedData.comment
-  }).unwrap();
-      setEditPhotoTargetId(null);
-      setIsUpdateSuccessOpen(true);
-    } catch (err) {
-      console.error('Fail:', err);
-    }
-  };
+        description: updatedData.comment,
+      }
+    }).unwrap();
+
+    setEditPhotoTargetId(null);
+    setIsUpdateSuccessOpen(true);
+    refetch();
+  } catch (err) {
+    console.error('Failed to update photos:', err);
+  }
+};
+
 
   const handleAttemptCloseEdit = (hasChanges: boolean) => {
     if (hasChanges) {

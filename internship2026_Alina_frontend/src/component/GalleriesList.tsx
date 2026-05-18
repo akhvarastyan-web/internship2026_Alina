@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setHeader } from '../store/slices/dashboard/dashboardHeader.slice';
 import { useFindAllGalleriesQuery, useRemoveGalleryMutation } from '../store/api/galleryApi';
 
 
@@ -8,6 +10,7 @@ import { ContextMenu } from './common/ContextMenu';
 
 export const GalleriesList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
 
@@ -22,6 +25,18 @@ export const GalleriesList = () => {
   const totalCount = data?.totalCount || 0;
   const limit = 8;
   const totalPages = data?.meta?.totalPages || data?.totalPages || Math.ceil((data?.total || galleries?.length || 0) / limit);
+
+  useEffect(() => {
+    const headerData = {
+      title: 'Create Gallery',
+      button: {
+        text: 'Create new gallery',
+        link: `/create-gallery`,
+      },
+    };
+
+    dispatch(setHeader(headerData));
+  }, [dispatch]);
 
   useEffect(() => {
     const handleGlobalClick = () => setActiveMenuId(null);

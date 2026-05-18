@@ -7,7 +7,6 @@ import { PhotoItem } from '../../../type/PhotoItem';
 import { useToast } from '../../../utils/useToast';
 import { Toast } from '../../common/Toast';
 import { GalleryFormFields } from './GalleryFormFields';
-import { handleInputChange } from '../../../utils/handleInputChange';
 import { useFileHandler } from '../../../utils/handleFileChange';
 import { Buttons } from './Buttons';
 import { useFieldAutoReset } from '../../../utils/useFieldAutoReset';
@@ -23,6 +22,9 @@ export const CreateGallery = () => {
   const { toast, showToast } = useToast();
   const { handleFileChange } = useFileHandler({ setPhotos });
 
+  const handleTitleChange = useFieldAutoReset('title', setGalleryTitle, setErrors, errors);
+  const handleDescriptionChange = useFieldAutoReset('description', setGalleryDescription, setErrors, errors);
+
 
   const handleClearGallery = () => {
     photos.forEach(photo => URL.revokeObjectURL(photo.previewUrl));
@@ -30,6 +32,8 @@ export const CreateGallery = () => {
     setGalleryTitle('');
     setGalleryDescription('');
   };
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +46,6 @@ export const CreateGallery = () => {
       return;
     }
 
-    console.log(validationErrors)
 
     setErrors({});
 
@@ -71,8 +74,6 @@ export const CreateGallery = () => {
     }
   };
 
-const handleTitleChange = useFieldAutoReset('title', setGalleryTitle, setErrors, errors);
-const handleDescriptionChange = useFieldAutoReset('description', setGalleryDescription, setErrors, errors);
 
   return (
     <section className="box-border flex flex-col gap-10 relative p-[30px] lg:p-0">
@@ -85,6 +86,7 @@ const handleDescriptionChange = useFieldAutoReset('description', setGalleryDescr
       <div className="flex gap-[60px] flex-col lg:flex-row">
        <div className="flex flex-col gap-10">
         <PhotoDropzone handleFileChange={handleFileChange} />
+        
      <GalleryFormFields
         nameValue={galleryTitle}
         onNameChange={handleTitleChange}
@@ -94,8 +96,12 @@ const handleDescriptionChange = useFieldAutoReset('description', setGalleryDescr
     />
      </div>
 
-    <PhotoEditList photos={photos}
-  errors={errors} handleInputChange={(id, field, value) => handleInputChange(id, field, value, setPhotos, setErrors)} />
+    <PhotoEditList
+     setErrors={setErrors}
+     setPhotos={setPhotos}
+     photos={photos}
+  errors={errors}
+  />
     </div>
     </main>
 

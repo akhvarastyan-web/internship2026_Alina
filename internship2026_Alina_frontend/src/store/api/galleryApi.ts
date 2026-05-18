@@ -66,6 +66,15 @@ export const galleryApi = createApi({
       invalidatesTags: (result, error, { id }) => ['GalleryList', { type: 'Gallery', id }],
     }),
 
+    updatePhoto: builder.mutation<void, { photoId: number; body: { title?: string; description?: string } }>({
+  query: ({ photoId, body }) => ({
+    url: `/galleries/photos/${photoId}`,
+    method: 'PATCH',
+    body,
+  }),
+  invalidatesTags: ['GalleryList'],
+}),
+
     removeGallery: builder.mutation<void, number>({
       query: (id) => ({
         url: `/galleries/${id}`,
@@ -83,14 +92,7 @@ export const galleryApi = createApi({
   invalidatesTags: (result, error, { galleryId }) => [{ type: 'PhotoList', id: galleryId }],
 }),
 
-    updatePhoto: builder.mutation<Photo, UpdatePhotoArgs>({
-      query: ({ photoId, ...body }) => ({
-        url: `/galleries/photos/${photoId}`,
-        method: 'PATCH',
-        body,
-      }),
-      invalidatesTags: ['PhotoList'],
-    }),
+
 
     removePhoto: builder.mutation<void, number>({
       query: (photoId) => ({

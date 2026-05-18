@@ -7,14 +7,18 @@ import {
   useFindPhotosByGalleryQuery,
   useUpdateGalleryMutation,
   useRemovePhotoMutation,
+  useUpdatePhotoMutation,
 } from '../../../store/api/galleryApi';
 import { useToast } from '../../../utils/useToast';
-import { handleInputChange } from '../../../utils/handleInputChange';
 import { Toast } from '../../common/Toast';
 import { Buttons } from './Buttons';
 import { GalleryFormFields } from './GalleryFormFields';
 import { DeleteModal } from '../../common/DeleteModal';
-
+import { useFieldAutoReset } from '../../../utils/useFieldAutoReset';
+import {
+  validateGallery,
+  GalleryErrors,
+} from '../../../utils/validations/validateGallery';
 
 export const UpdateGallery = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,13 +29,18 @@ export const UpdateGallery = () => {
   const [galleryDescription, setGalleryDescription] = useState('');
   const [deleteTargetId, setDeleteTargetId] = useState<number | string | null>(null);
   const [isDeletedSuccess, setIsDeletedSuccess] = useState(false);
+  const [errors, setErrors] = useState<GalleryErrors>({});
 
   const { data: gallery, isLoading: isGalleryLoading } = useFindOneGalleryQuery(galleryId, { skip: !galleryId });
   const { data: photosData, isLoading: isPhotosLoading } = useFindPhotosByGalleryQuery({ galleryId }, { skip: !galleryId });
   const [updateGallery, { isLoading: isUpdating }] = useUpdateGalleryMutation();
   const [removePhoto, { isLoading: isPhotoDeleting }] = useRemovePhotoMutation()
+  const [updatePhoto, { isLoading: isUploding}] = useUpdatePhotoMutation()
 
   const { toast, showToast } = useToast();
+
+  const handleTitleChange = useFieldAutoReset('title', setGalleryTitle, setErrors, errors);
+  const handleDescriptionChange = useFieldAutoReset('description', setGalleryDescription, setErrors, errors);
 
 
   useEffect(() => {
@@ -62,7 +71,6 @@ export const UpdateGallery = () => {
     setDeleteTargetId(photoId);
     setIsDeletedSuccess(false);
   };
-
 
   const closeDeleteModal = () => {
     setDeleteTargetId(null);
@@ -110,22 +118,48 @@ export const UpdateGallery = () => {
     }
   };
 
-   const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
+    const validationErrors = validateGallery(
+      galleryTitle,
+      galleryDescription,
+      photos,
+    );
+
+       if (Object.keys(validationErrors).length > 0) {
+
+        setErrors(validationErrors);
+        showToast('Please fix the errors in the form.', 'error');
+
+        return;
+      }
+
+      console.log(validationErrors)
+
+      setErrors({});
+
   try {
+
     await updateGallery({
       id: galleryId,
       body: {
         title: galleryTitle,
         description: galleryDescription,
-        photos: photos.map(photo => ({
-          id: photo.id,
-          title: photo.title || '',
-          description: photo.description || '',
-        })),
       },
     }).unwrap();
+
+
+    await Promise.all(
+      photos
+        .filter(photo => typeof photo.id === 'number')
+        .map(photo =>
+          updatePhoto({
+            photoId: photo.id as number,
+            body: { title: photo.title, description: photo.description },
+          }).unwrap()
+        )
+    );
 
     showToast('Gallery is updated', 'success');
   } catch (error: any) {
@@ -151,15 +185,20 @@ export const UpdateGallery = () => {
       <div className='flex flex-col lg:flex-row gap-[60px]'>
       <GalleryFormFields
         nameValue={galleryTitle}
-        onNameChange={setGalleryTitle}
+        onNameChange={handleTitleChange}
         descriptionValue={galleryDescription}
-        onDescriptionChange={setGalleryDescription}
+        onDescriptionChange={handleDescriptionChange}
+        errors={errors}
     />
-      <PhotoEditList
-      photos={photos}
-      handleInputChange={(id, field, value) => handleInputChange(id, field, value, setPhotos)}
-      onDeletePhoto={openDeleteModal }
+
+    <PhotoEditList
+          setErrors={setErrors}
+          setPhotos={setPhotos}
+          photos={photos}
+          errors={errors}
+          onDeletePhoto={openDeleteModal}
       />
+
       </div>
      <Buttons
   submitText="Save Changes"
