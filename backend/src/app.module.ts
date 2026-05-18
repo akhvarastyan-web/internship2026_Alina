@@ -5,6 +5,7 @@ import { validationSchema } from './config/env.validation';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { GalleriesModule } from './galleries/galleries.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { GalleriesModule } from './galleries/galleries.module';
     AuthModule,
     UsersModule,
     GalleriesModule,
+    ImagesModule,
   ],
   controllers: [],
   providers: [],

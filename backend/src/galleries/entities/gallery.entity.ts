@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Photo } from './photo.entity';
 import { User } from '../../users/user.entity';
+import { Image } from '../../images/image.entity';
 
 @Entity('galleries')
 export class Gallery {
@@ -22,6 +23,9 @@ export class Gallery {
 
   @OneToMany(() => Photo, (photo) => photo.gallery, { cascade: true })
   photos: Photo[];
+
+  @OneToMany(() => Image, (image) => image.gallery, { cascade: true })
+  images: Image[];
 
   @ManyToOne(() => User, (user) => user.galleries, { onDelete: 'CASCADE' })
   user: User;
