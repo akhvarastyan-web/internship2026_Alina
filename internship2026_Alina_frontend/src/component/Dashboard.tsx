@@ -1,29 +1,24 @@
 import { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Outlet, useLocation, Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { ProfileSideBar } from './ProfileSideBar';
 import { Header } from './common/Headers';
+import { RootState } from '../store/index';
+
 
 export const Dashboard = () => {
+  const { title, buttonConfig } = useSelector(
+    (state: RootState) => state.dashboardHeader,
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-
-  const getTitle = () => {
-    switch (location.pathname) {
-      case '/profile-settings':
-        return 'Profile Settings';
-      case '/':
-        return 'Identifying';
-      default:
-        return 'Identifying';
-    }
-  };
 
   return (
     <div className="flex min-h-screen">
       <aside
         className={`
-        fixed z-50 profile-sidebar-w bg-bg-main rounded-2xl shadow-lg
+        fixed z-50 profile-sidebar-w bg-bg-soft rounded-2xl shadow-lg
         transition-transform duration-300 lg:relative lg:translate-x-0
         top-0 bottom-0 m-4 lg:m-[30px]
          shrink-0
@@ -50,15 +45,18 @@ export const Dashboard = () => {
         <header className="w-full">
           <div className="flex items-center gap-[50px] p-4 lg:px-[30px] lg:py-[22px]">
             <div className="flex-1 min-w-0">
-              <Header>{getTitle()}</Header>
+              <Header>{title || 'Dashboard'}</Header>
             </div>
 
-            <div className="shrink-0">
-              {location.pathname === '/' && (
-                <button className="hidden lg:block text-accent border border-accent px-4 py-2 rounded-full hover:underline">
-                  Go to search results
-                </button>
-              )}
+            <div className="shrink-0 flex items-center gap-4">
+            {buttonConfig && buttonConfig.link && (
+              <Link
+                to={buttonConfig.link}
+                className="hidden lg:block text-accent border border-accent px-4 py-2 rounded-full hover:underline whitespace-nowrap"
+              >
+                {buttonConfig.text}
+              </Link>
+            )}
 
               <button
                 className=" lg:hidden"

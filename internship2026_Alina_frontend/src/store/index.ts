@@ -1,13 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authApi } from './api/authApi';
+import { userApi } from './api/userApi';
+import { galleryApi } from './api/galleryApi';
 import authReducer from './slices/auth/auth.slice';
+import dashboardHeaderReducer from './slices/dashboard/dashboardHeader.slice';
 import { listenerMiddleware } from './listenerMiddleware';
+export { useFindAllGalleriesQuery } from '../store/api/galleryApi';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    dashboardHeader: dashboardHeaderReducer,
 
     [authApi.reducerPath]: authApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
+    [galleryApi.reducerPath]: galleryApi.reducer,
   },
 
   middleware: getDefaultMiddleware =>
@@ -15,7 +22,7 @@ export const store = configureStore({
       serializableCheck: false,
     })
       .prepend(listenerMiddleware.middleware)
-      .concat(authApi.middleware),
+      .concat(authApi.middleware, userApi.middleware, galleryApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

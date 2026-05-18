@@ -40,7 +40,7 @@ export class AuthService {
   }
 
   async logout(userId: string): Promise<void> {
-    await this.usersService.updateRefreshToken(userId, null);
+    await this.usersService.updateRefreshToken(+userId, null);
   }
 
   async refreshTokens(token: string) {
@@ -87,11 +87,11 @@ export class AuthService {
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
     const user = await this.usersService.findByResetToken(token);
-    if (!user) {
+    if (!user || !user.resetTokenExpiry) {
       throw new BadRequestException('Invalid or expired password reset token');
     }
 
-    if (new Date() > user.resetTokenExpiresAt) {
+    if (new Date() > user.resetTokenExpiry) {
       throw new BadRequestException('Token has expired');
     }
 

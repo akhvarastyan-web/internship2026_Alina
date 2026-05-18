@@ -1,6 +1,10 @@
 import { Square, CheckSquare } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { PasswordChecklistProps } from '../../type/PasswordChecklistProps';
+
+interface PasswordChecklistProps {
+  value: string;
+  confirmValue?: string;
+}
 
 export const PasswordChecklist = ({
   value,

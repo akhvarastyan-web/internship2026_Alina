@@ -1,4 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import { join } from 'path';
+import * as express from 'express';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ClassSerializerInterceptor } from '@nestjs/common';
@@ -12,6 +14,8 @@ async function bootstrap() {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   app.use(cookieParser());
+
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -38,6 +42,7 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
     credentials: true,
   });
 

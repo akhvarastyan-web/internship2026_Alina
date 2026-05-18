@@ -10,6 +10,7 @@ import { logout, setCredentials } from '../slices/auth/auth.slice';
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
 
+  credentials: 'include',
 
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
@@ -40,15 +41,13 @@ export const baseQueryWithReauth: BaseQueryFn<
     );
 
     if (refreshResult.data) {
-      const { accessToken } =
+      const { access_token } =
         refreshResult.data as {
-          accessToken: string;
+          access_token: string;
         };
 
       (api.dispatch as AppDispatch)(
-        setCredentials({
-          accessToken,
-        })
+        setCredentials({ accessToken: access_token }),
       );
 
       result = await rawBaseQuery(args, api, extraOptions);

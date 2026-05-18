@@ -1,11 +1,11 @@
 import { Exclude } from 'class-transformer';
-
+import { Gallery } from '../galleries/entities/gallery.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('users')
@@ -35,4 +35,15 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   resetTokenExpiry?: Date;
 
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
+  @Column({ nullable: true })
+  backgroundUrl?: string;
+  
+  @Column({ nullable: true })
+  hashedRefreshToken?: string;
+
+  @OneToMany(() => Gallery, (gallery) => gallery.user)
+  galleries: Gallery[];
 }

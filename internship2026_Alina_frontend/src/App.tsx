@@ -4,7 +4,7 @@ import {
   Navigate,
   Outlet,
 } from 'react-router-dom';
-import { GalleryPage } from './page/GalleryPage';
+import { GalleriesPage } from './page/GalleriesPage';
 import { SignUpPage } from './page/SignUpPage';
 import { SignInPage } from './page/SignInPage';
 import { AuthLayout } from './component/common/AuthLayout';
@@ -17,7 +17,9 @@ import { CreateGalleryPage } from './page/CreateGalleryPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 import { AuthProvider } from './providers/authProvider';
-
+import { GalleryDetails } from './component/GalleryDetails';
+import { UpdateGalleryPage } from './page/UpdateGalleryPage';
+import { UploadPhotosPage } from './page/UploadePhotosPage';
 
 const router = createBrowserRouter([
   {
@@ -37,11 +39,23 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'galleries',
-            element: <GalleryPage />,
+            element: <GalleriesPage />,
+          },
+          {
+            path: '/galleries/:id',
+            element: <GalleryDetails />,
           },
           {
             path: 'create-gallery',
             element: <CreateGalleryPage />,
+          },
+          {
+            path: 'update-gallery/:id',
+            element: <UpdateGalleryPage />,
+          },
+          {
+            path: 'upload-photos/:id',
+            element: <UploadPhotosPage />,
           },
           {
             path: 'profile-settings',

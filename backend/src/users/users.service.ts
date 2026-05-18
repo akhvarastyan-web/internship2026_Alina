@@ -84,14 +84,14 @@ export class UsersService {
 
   async updateRefreshToken(
     id: number,
-    hashedRefreshToken: string,
+    hashedRefreshToken: string | null,
   ): Promise<void> {
     const user = await this.findOne(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    user.hashedRefreshToken = hashedRefreshToken;
+    user.hashedRefreshToken = hashedRefreshToken ?? undefined;
 
     await this.usersRepository.save(user);
   }
@@ -128,5 +128,21 @@ async findByResetToken(token: string): Promise<User | null> {
     user.resetTokenExpiry = undefined;
 
     await this.usersRepository.save(user);
-}
+  }
+
+  async updateAvatar(userId: number, filePath: string): Promise<User> {
+    const user = await this.findOne(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    user.avatarUrl = filePath;
+    return this.usersRepository.save(user);
+  }
+
+  async updateBackground(userId: number, filePath: string): Promise<User> {
+    const user = await this.findOne(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    user.backgroundUrl = filePath;
+    return this.usersRepository.save(user);
+  }
 }
